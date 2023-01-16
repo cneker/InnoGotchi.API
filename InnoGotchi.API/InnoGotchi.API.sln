@@ -5,7 +5,9 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.API", "InnoGotchi.API\InnoGotchi.API.csproj", "{24577B3E-4264-46EB-9B7E-EFA242434A12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InnoGotchi.Domain", "..\InnoGotchi.Domain\InnoGotchi.Domain.csproj", "{15513229-F274-477C-8953-920A0C19C13D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.Domain", "InnoGotchi.Domain\InnoGotchi.Domain.csproj", "{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InnoGotchi.Application", "InnoGotchi.Application\InnoGotchi.Application.csproj", "{CD00DE17-CB7A-4C2C-A18D-E3846CDA22C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +19,14 @@ Global
 		{24577B3E-4264-46EB-9B7E-EFA242434A12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24577B3E-4264-46EB-9B7E-EFA242434A12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24577B3E-4264-46EB-9B7E-EFA242434A12}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15513229-F274-477C-8953-920A0C19C13D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15513229-F274-477C-8953-920A0C19C13D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15513229-F274-477C-8953-920A0C19C13D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15513229-F274-477C-8953-920A0C19C13D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD00DE17-CB7A-4C2C-A18D-E3846CDA22C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD00DE17-CB7A-4C2C-A18D-E3846CDA22C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD00DE17-CB7A-4C2C-A18D-E3846CDA22C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD00DE17-CB7A-4C2C-A18D-E3846CDA22C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
