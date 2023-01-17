@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using InnoGotchi.Application.DataTransferObjects;
+using InnoGotchi.Application.DataTransferObjects.Pet;
 
-namespace InnoGotchi.Application.Validators
+namespace InnoGotchi.Application.Validators.Pet
 {
     public class PetForCreationDtoValidator : AbstractValidator<PetForCreationDto>
     {

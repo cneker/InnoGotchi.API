@@ -1,4 +1,4 @@
-﻿namespace InnoGotchi.Application.DataTransferObjects
+﻿namespace InnoGotchi.Application.DataTransferObjects.Farm
 {
     public class FarmForUpdateDto
     {

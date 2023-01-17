@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using InnoGotchi.Application.DataTransferObjects;
+using InnoGotchi.Application.DataTransferObjects.User;
 
-namespace InnoGotchi.Application.Validators
+namespace InnoGotchi.Application.Validators.User
 {
     public class UserForRegistrationDtoValidator : AbstractValidator<UserForRegistrationDto>
     {

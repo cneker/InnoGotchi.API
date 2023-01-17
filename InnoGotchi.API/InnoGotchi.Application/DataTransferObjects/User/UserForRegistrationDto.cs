@@ -1,4 +1,4 @@
-﻿namespace InnoGotchi.Application.DataTransferObjects
+﻿namespace InnoGotchi.Application.DataTransferObjects.User
 {
     public class UserForRegistrationDto
     {

@@ -1,6 +1,6 @@
 ﻿using InnoGotchi.Domain.Enums;
 
-namespace InnoGotchi.Application.DataTransferObjects
+namespace InnoGotchi.Application.DataTransferObjects.Pet
 {
     public class PetForCreationDto
     {

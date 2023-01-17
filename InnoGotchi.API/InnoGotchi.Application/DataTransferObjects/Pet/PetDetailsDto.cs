@@ -1,8 +1,8 @@
 ﻿using InnoGotchi.Domain.Enums;
 
-namespace InnoGotchi.Application.DataTransferObjects
+namespace InnoGotchi.Application.DataTransferObjects.Pet
 {
-    public class PetOverviewDto
+    public class PetDetailsDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -11,6 +11,10 @@ namespace InnoGotchi.Application.DataTransferObjects
         public DateTime LastFed { get; set; }
         public DateTime LastDrank { get; set; }
         public int Age { get; set; }
-        public bool IsAlive { get; set; }
+        public bool IsAlvie { get; set; }
+        public Body Body { get; set; }
+        public Eye Eye { get; set; }
+        public Nose Nose { get; set; }
+        public Mouth Mouth { get; set; }
     }
 }

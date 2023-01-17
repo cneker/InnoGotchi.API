@@ -1,4 +1,4 @@
-﻿namespace InnoGotchi.Application.DataTransferObjects
+﻿namespace InnoGotchi.Application.DataTransferObjects.User
 {
     //later change to UserDetailsDto with Avatar field
     public class UserInfoDto

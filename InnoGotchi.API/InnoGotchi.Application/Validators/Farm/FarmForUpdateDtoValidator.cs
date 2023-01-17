@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using InnoGotchi.Application.DataTransferObjects;
+using InnoGotchi.Application.DataTransferObjects.Farm;
 
-namespace InnoGotchi.Application.Validators
+namespace InnoGotchi.Application.Validators.Farm
 {
     public class FarmForUpdateDtoValidator : AbstractValidator<FarmForUpdateDto>
     {
