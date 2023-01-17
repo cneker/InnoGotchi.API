@@ -1,6 +1,6 @@
 ﻿namespace InnoGotchi.Application.DataTransferObjects
 {
-    public class PetForUpdate
+    public class FarmForUpdateDto
     {
         public string Name { get; set; }
     }
