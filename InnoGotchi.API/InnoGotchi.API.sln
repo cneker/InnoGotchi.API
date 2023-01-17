@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.API", "InnoGotch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.Domain", "InnoGotchi.Domain\InnoGotchi.Domain.csproj", "{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InnoGotchi.Application", "InnoGotchi.Application\InnoGotchi.Application.csproj", "{CD00DE17-CB7A-4C2C-A18D-E3846CDA22C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.Application", "InnoGotchi.Application\InnoGotchi.Application.csproj", "{CD00DE17-CB7A-4C2C-A18D-E3846CDA22C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
