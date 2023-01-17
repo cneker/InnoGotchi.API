@@ -1,5 +1,4 @@
-﻿using InnoGotchi.Domain.Entities;
-using InnoGotchi.Domain.Enums;
+﻿using InnoGotchi.Domain.Enums;
 
 namespace InnoGotchi.Application.DataTransferObjects
 {
@@ -13,6 +12,9 @@ namespace InnoGotchi.Application.DataTransferObjects
         public DateTime LastDrank { get; set; }
         public int Age { get; set; }
         public bool IsAlvie { get; set; }
-        public PetBody PetBody { get; set; }
+        public Body Body { get; set; }
+        public Eye Eye { get; set; }
+        public Nose Nose { get; set; }
+        public Mouth Mouth { get; set; }
     }
 }

@@ -13,10 +13,12 @@ namespace InnoGotchi.Domain.Entities
         public ThirstyLevel ThirstyLevel { get; set; }
         public DateTime LastFed { get; set; }
         public DateTime LastDrank { get; set; }
-        public Guid PetBodyId { get; set; }
+        public Body Body { get; set; }
+        public Eye Eye { get; set; }
+        public Nose Nose { get; set; }
+        public Mouth Mouth { get; set; }
         public Guid FramId { get; set; }
 
-        public PetBody PetBody { get; set; }
         public Farm Farm { get; set; }
     }
 }
