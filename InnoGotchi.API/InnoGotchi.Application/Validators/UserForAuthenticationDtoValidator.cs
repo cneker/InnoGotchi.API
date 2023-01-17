@@ -13,6 +13,7 @@ namespace InnoGotchi.Application.Validators
         public UserForAuthenticationDtoValidator()
         {
             RuleFor(u => u.Email)
+                .NotEmpty()
                 .EmailAddress();
         }
     }

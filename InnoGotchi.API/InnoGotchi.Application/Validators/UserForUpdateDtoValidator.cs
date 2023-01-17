@@ -8,8 +8,10 @@ namespace InnoGotchi.Application.Validators
         public UserForUpdateDtoValidator()
         {
             RuleFor(u => u.FirstName)
+                .NotEmpty()
                 .Length(1, 30);
             RuleFor(u => u.LastName)
+                .NotEmpty()
                 .Length(1, 30);
             RuleFor(u => u.NewAvatar)
                 .NotEmpty();

@@ -8,10 +8,13 @@ namespace InnoGotchi.Application.Validators
         public UserForRegistrationDtoValidator()
         {
             RuleFor(u => u.Email)
+                .NotEmpty()
                 .EmailAddress();
             RuleFor(u => u.FirstName)
+                .NotEmpty()
                 .Length(1, 30);
             RuleFor(u => u.LastName)
+                .NotEmpty()
                 .Length(1, 30);
         }
     }
