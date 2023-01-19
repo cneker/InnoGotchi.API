@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Infrastructure.Persistance
+namespace Infrastructure.Persistance.Repositories
 {
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
-        private RepositoryContext _repositoryContext;
+        private AppDbContext _repositoryContext;
 
-        public RepositoryBase(RepositoryContext repositoryContext)
+        public RepositoryBase(AppDbContext repositoryContext)
         {
             _repositoryContext = repositoryContext;
         }

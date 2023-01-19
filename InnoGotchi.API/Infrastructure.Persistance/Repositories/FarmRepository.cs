@@ -2,11 +2,11 @@
 using InnoGotchi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistance
+namespace Infrastructure.Persistance.Repositories
 {
     public class FarmRepository : RepositoryBase<Farm>, IFarmRepository
     {
-        public FarmRepository(RepositoryContext repositoryContext) 
+        public FarmRepository(AppDbContext repositoryContext)
             : base(repositoryContext)
         {
         }

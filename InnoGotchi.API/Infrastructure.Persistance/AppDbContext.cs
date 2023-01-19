@@ -3,19 +3,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistance
 {
-    public class RepositoryContext : DbContext
+    public class AppDbContext : DbContext
     {
-        DbSet<User> Users { get; set; }
         DbSet<Farm> Farms { get; set; }
         DbSet<Pet> Pets { get; set; }
+        DbSet<User> Users { get; set; }
 
-        public RepositoryContext(DbContextOptions options) : base(options)
+        public AppDbContext(DbContextOptions options) : base(options)
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder builder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnConfiguring(builder);
+            base.OnModelCreating(builder);
             //configurations for each dbset
         }
     }

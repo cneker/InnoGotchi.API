@@ -1,15 +1,15 @@
 ﻿using InnoGotchi.Application.Contracts.Repositories;
 
-namespace Infrastructure.Persistance
+namespace Infrastructure.Persistance.Repositories
 {
     public class RepositoryManager : IRepositoryManager
     {
-        private RepositoryContext _repositoryContext;
+        private AppDbContext _repositoryContext;
         private IUserRepository _userRepository;
         private IFarmRepository _farmRepository;
         private IPetRepository _petRepository;
 
-        public RepositoryManager(RepositoryContext repositoryContext)
+        public RepositoryManager(AppDbContext repositoryContext)
         {
             _repositoryContext = repositoryContext;
         }
@@ -17,7 +17,7 @@ namespace Infrastructure.Persistance
         {
             get
             {
-                if(_userRepository == null)
+                if (_userRepository == null)
                     _userRepository = new UserRepository(_repositoryContext);
                 return _userRepository;
             }

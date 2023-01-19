@@ -2,11 +2,11 @@
 using InnoGotchi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistance
+namespace Infrastructure.Persistance.Repositories
 {
     public class PetRepository : RepositoryBase<Pet>, IPetRepository
     {
-        public PetRepository(RepositoryContext repositoryContext) 
+        public PetRepository(AppDbContext repositoryContext)
             : base(repositoryContext)
         {
         }

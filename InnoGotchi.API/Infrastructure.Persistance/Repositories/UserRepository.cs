@@ -2,22 +2,24 @@
 using InnoGotchi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistance
+namespace Infrastructure.Persistance.Repositories
 {
     public class UserRepository : RepositoryBase<User>, IUserRepository
     {
-
-        public UserRepository(RepositoryContext repositoryContext) 
+        public UserRepository(AppDbContext repositoryContext)
             : base(repositoryContext)
         {
         }
 
         public async Task<IEnumerable<User>> GetUsersAsync(bool trackChanges) =>
-            await GetAll(trackChanges)
-            .ToListAsync();
+            await GetAll(trackChanges).ToListAsync();
 
-        public async Task<User> GetUserByIdAsync(Guid id, bool trackChanges) =>
-            await GetByCondition(u => u.Id == id, trackChanges)
+        public async Task<User> GetUserByIdAsync(Guid id, bool trackChanged) =>
+            await GetByCondition(u => u.Id == id, trackChanged)
+            .SingleOrDefaultAsync();
+
+        public async Task<User> GetUserByEmailAsync(string email, bool trackChanged) =>
+            await GetByCondition(u => u.Email == email, trackChanged)
             .SingleOrDefaultAsync();
 
         public async Task CreateUser(User user) =>
