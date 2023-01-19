@@ -19,6 +19,10 @@ namespace Infrastructure.Persistance.Repositories
             await GetByCondition(f => f.Id == id, trackChanges)
             .SingleOrDefaultAsync();
 
+        public async Task<Farm> GetFarmByUserIdAsync(Guid id, bool trackChanges) =>
+            await GetByCondition(f => f.UserId == id, trackChanges)
+            .SingleOrDefaultAsync();
+
         public async Task CreateFarm(Farm farm) =>
             await Create(farm);
 

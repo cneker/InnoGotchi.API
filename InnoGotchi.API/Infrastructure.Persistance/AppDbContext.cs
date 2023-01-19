@@ -5,9 +5,9 @@ namespace Infrastructure.Persistance
 {
     public class AppDbContext : DbContext
     {
-        DbSet<Farm> Farms { get; set; }
-        DbSet<Pet> Pets { get; set; }
-        DbSet<User> Users { get; set; }
+        public DbSet<Farm> Farms { get; set; }
+        public DbSet<Pet> Pets { get; set; }
+        public DbSet<User> Users { get; set; }
 
         public AppDbContext(DbContextOptions options) : base(options)
         {

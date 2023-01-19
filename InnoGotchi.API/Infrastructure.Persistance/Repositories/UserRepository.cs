@@ -16,6 +16,7 @@ namespace Infrastructure.Persistance.Repositories
 
         public async Task<User> GetUserByIdAsync(Guid id, bool trackChanged) =>
             await GetByCondition(u => u.Id == id, trackChanged)
+            .Include(u => u.FriendsFarms)
             .SingleOrDefaultAsync();
 
         public async Task<User> GetUserByEmailAsync(string email, bool trackChanged) =>

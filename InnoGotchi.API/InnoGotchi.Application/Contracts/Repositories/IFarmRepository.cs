@@ -6,6 +6,7 @@ namespace InnoGotchi.Application.Contracts.Repositories
     {
         Task<IEnumerable<Farm>> GetFarmsAsync(bool trackChanges);
         Task<Farm> GetFarmByIdAsync(Guid id, bool trackChanges);
+        Task<Farm> GetFarmByUserIdAsync(Guid id, bool trackChanges);
         Task CreateFarm(Farm farm);
         void DelteFarm(Farm farm);
     }
