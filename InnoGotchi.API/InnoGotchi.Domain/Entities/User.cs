@@ -10,6 +10,6 @@
         public string PasswordHash { get; set; }
 
         public Farm UserFarm { get; set; }
-        public ICollection<Farm> FriendsFarm { get; set; }
+        public ICollection<Farm> FriendsFarms { get; set; }
     }
 }
