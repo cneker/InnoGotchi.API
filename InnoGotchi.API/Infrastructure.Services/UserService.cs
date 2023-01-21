@@ -3,6 +3,7 @@ using FluentValidation;
 using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.User;
+using InnoGotchi.Domain.Entities;
 
 namespace Infrastructure.Services
 {
@@ -35,7 +36,7 @@ namespace Infrastructure.Services
             if(user != null)
                 throw new Exception("the email has already registered");
 
-            _mapper.Map(userForReg, user);
+            user = _mapper.Map<User>(userForReg);
             user.PasswordHash = _authService.CreatePasswordHash(userForReg.Password);
             await _repositoryManager.UserRepository.CreateUser(user);
             await _repositoryManager.SaveAsync();
@@ -49,8 +50,9 @@ namespace Infrastructure.Services
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, false);
             if (user == null)
-                throw new Exception("not found");
+                throw new Exception("user not found");
 
+            _repositoryManager.FarmRepository.DeleteFarm(user.UserFarm);
             _repositoryManager.UserRepository.DeleteUser(user);
         }
 
@@ -58,7 +60,7 @@ namespace Infrastructure.Services
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, false);
             if (user == null)
-                throw new Exception("not found");
+                throw new Exception("user not found");
 
             var userInfo = _mapper.Map<UserInfoDto>(user);
 
@@ -72,10 +74,10 @@ namespace Infrastructure.Services
                 throw new Exception("invalid data");
 
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, true);
-            if (user != null)
-                throw new Exception("the email has already registered");
+            if (user == null)
+                throw new Exception("user not found");
 
-            _mapper.Map(userForUpdate, user);
+            user = _mapper.Map<User>(userForUpdate);
 
             user.PasswordHash = _authService.CreatePasswordHash(userForUpdate.NewPassword);
         }
@@ -87,8 +89,8 @@ namespace Infrastructure.Services
                 throw new Exception("invalid data");
 
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, true);
-            if (user != null)
-                throw new Exception("the email has already registered");
+            if (user == null)
+                throw new Exception("user not found");
 
             _mapper.Map(userForUpdate, user);
         }
