@@ -12,15 +12,19 @@ namespace Infrastructure.Persistance.Repositories
         }
 
         public async Task<IEnumerable<User>> GetUsersAsync(bool trackChanges) =>
-            await GetAll(trackChanges).ToListAsync();
+            await GetAll(trackChanges)
+            .ToListAsync();
 
         public async Task<User> GetUserByIdAsync(Guid id, bool trackChanged) =>
             await GetByCondition(u => u.Id == id, trackChanged)
+            .Include(u => u.UserFarm)
             .Include(u => u.FriendsFarms)
             .SingleOrDefaultAsync();
 
         public async Task<User> GetUserByEmailAsync(string email, bool trackChanged) =>
             await GetByCondition(u => u.Email == email, trackChanged)
+            .Include(u => u.UserFarm)
+            .Include(u => u.FriendsFarms)
             .SingleOrDefaultAsync();
 
         public async Task CreateUser(User user) =>
