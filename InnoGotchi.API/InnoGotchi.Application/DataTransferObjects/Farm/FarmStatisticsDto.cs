@@ -6,8 +6,8 @@
         public string Name { get; set; }
         public int AlivePetsCount { get; set; }
         public int DeadPetsCount { get; set; }
-        public int AverageFeedingPeriod { get; set; }
-        public int AverageThirstQuenchingPeriod { get; set; }
+        public double AverageFeedingPeriod { get; set; }
+        public double AverageThirstQuenchingPeriod { get; set; }
         public int AveragePetsHappinessDaysCount { get; set; }
         public int AveragePetsAge { get; set; }
     }
