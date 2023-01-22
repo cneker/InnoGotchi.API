@@ -8,8 +8,6 @@ namespace InnoGotchi.Application.DataTransferObjects.Pet
         public string Name { get; set; }
         public HungerLevel HungerLevel { get; set; }
         public ThirstyLevel ThirstyLevel { get; set; }
-        public DateTime LastFed { get; set; }
-        public DateTime LastDrank { get; set; }
         public int Age { get; set; }
         public bool IsAlive { get; set; }
     }
