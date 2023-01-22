@@ -29,13 +29,39 @@ namespace Infrastructure.Services
                 Convert.ToInt32(
                     (await _repositoryManager.PetRepository.GetDeadPetsByFarmAsync(farm.Id, false))
                     .Average(p => p.HappynessDayCount));
-            farm.AverageFeedingPeriod =
-                (await _repositoryManager.PetRepository.GetDeadPetsByFarmAsync(farm.Id, false))
-                .Average(p => p.FeedingPeriod);
-            farm.AverageThirstQuenchingPeriod =
-                (await _repositoryManager.PetRepository.GetDeadPetsByFarmAsync(farm.Id, false))
-                .Average(p => p.ThirstQuenchingPeriod);
+            farm.AverageFeedingPeriod = await CalculateAverageFeedingPeriod(farm.Id);
+            farm.AverageThirstQuenchingPeriod = await CalculateAverageDrinkingPeriod(farm.Id);
             return farm;
+        }
+
+        private async Task<double> CalculateAverageFeedingPeriod(Guid farmId)
+        {
+            var feedingRecords = await _repositoryManager
+                .FeedingHistoryRepository
+                .GetHistoryByFarmIdAsync(farmId, false);
+
+            var dates = feedingRecords.Select(r => r.FeedingDate).ToArray();
+            double period = 0.0;
+            for(int i = 1; i < dates.Count(); i++)
+            {
+                period += (dates[i] - dates[i - 1]).TotalHours;
+            }
+            return period;
+        }
+
+        private async Task<double> CalculateAverageDrinkingPeriod(Guid farmId)
+        {
+            var feedingRecords = await _repositoryManager
+                .DrinkingHistoryRepository
+                .GetHistoryByFarmIdAsync(farmId, false);
+
+            var dates = feedingRecords.Select(r => r.DringkingDate).ToArray();
+            double period = 0.0;
+            for (int i = 1; i < dates.Count(); i++)
+            {
+                period += (dates[i] - dates[i - 1]).TotalHours;
+            }
+            return period;
         }
     }
 }

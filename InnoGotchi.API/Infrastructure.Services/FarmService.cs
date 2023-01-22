@@ -122,6 +122,7 @@ namespace Infrastructure.Services
                 throw new Exception("farm not found");
 
             _mapper.Map(farmForUpdate, farm);
+            await _repositoryManager.SaveAsync();
         }
 
         public async Task DeleteFarmById(Guid id)
