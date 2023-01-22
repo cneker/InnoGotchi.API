@@ -1,4 +1,5 @@
-﻿using InnoGotchi.Domain.Entities;
+﻿using Infrastructure.Persistance.Configurations;
+using InnoGotchi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistance
@@ -18,7 +19,10 @@ namespace Infrastructure.Persistance
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            //configurations for each dbset
+            
+            builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new FarmConfiguration());
+            builder.ApplyConfiguration(new PetConfiguration());
         }
     }
 }
