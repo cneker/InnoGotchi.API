@@ -7,16 +7,18 @@ namespace Infrastructure.Services
     public class GenerateFarmStatisticsService : IGenerateFarmStatisticsService
     {
         private readonly IRepositoryManager _repositoryManager;
-        private readonly ICalculatePetAgeService _calculateAge;
+        private readonly IPetConditionService _petConditionService;
         public GenerateFarmStatisticsService(IRepositoryManager repositoryManager,
-            ICalculatePetAgeService calculateAge)
+            IPetConditionService petConditionService)
         {
             _repositoryManager = repositoryManager;
-            _calculateAge = calculateAge;
+            _petConditionService = petConditionService;
         }
 
         public async Task<FarmStatisticsDto> GenerateStatistics(FarmStatisticsDto farm)
         {
+            await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm.Id);
+
             farm.AlivePetsCount = 
                 (await _repositoryManager.PetRepository.GetAlivePetsByFarmAsync(farm.Id, false)).Count();
             farm.DeadPetsCount =
@@ -24,10 +26,10 @@ namespace Infrastructure.Services
             farm.AveragePetsAge =
                 Convert.ToInt32(
                     (await _repositoryManager.PetRepository.GetPetsByFarmIdAsync(farm.Id, false))
-                    .Average(p => _calculateAge.CalculateAge(p.Birthday, p.DeathDay)));
+                    .Average(p => _petConditionService.CalculateAge(p)));
             farm.AveragePetsHappinessDaysCount =
                 Convert.ToInt32(
-                    (await _repositoryManager.PetRepository.GetDeadPetsByFarmAsync(farm.Id, false))
+                    (await _repositoryManager.PetRepository.GetPetsByFarmIdAsync(farm.Id, false))
                     .Average(p => p.HappynessDayCount));
             farm.AverageFeedingPeriod = await CalculateAverageFeedingPeriod(farm.Id);
             farm.AverageThirstQuenchingPeriod = await CalculateAverageDrinkingPeriod(farm.Id);

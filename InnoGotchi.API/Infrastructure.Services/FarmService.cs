@@ -16,11 +16,12 @@ namespace Infrastructure.Services
         private readonly IValidator<UserForInvitingDto> _inviteUserValidator;
         private readonly IMapper _mapper;
         private readonly IGenerateFarmStatisticsService _generatetStatistics;
+        private readonly IPetConditionService _petConditionService;
 
         public FarmService(IRepositoryManager repositoryManager, IValidator<FarmForCreationDto> createFarmValidator, 
-            IValidator<FarmForUpdateDto> updateFarmValidator, IMapper mapper, 
+            IValidator<FarmForUpdateDto> updateFarmValidator, IMapper mapper,
             IValidator<UserForInvitingDto> inviteUserValidator,
-            IGenerateFarmStatisticsService generateStatistics)
+            IGenerateFarmStatisticsService generateStatistics, IPetConditionService petConditionService)
         {
             _repositoryManager = repositoryManager;
             _createFarmValidator = createFarmValidator;
@@ -28,6 +29,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
             _inviteUserValidator = inviteUserValidator;
             _generatetStatistics = generateStatistics;
+            _petConditionService = petConditionService;
         }
 
         public async Task<Guid> CreateFarmAsync(Guid userId, FarmForCreationDto farmForCreation)
@@ -53,9 +55,12 @@ namespace Infrastructure.Services
             var farm = await _repositoryManager.FarmRepository.GetFarmByUserIdAsync(userId, false);
             if (farm == null)
                 throw new Exception("farm not found");
-            
+
+            //UPDATE VITAL SIGNS AND SAVE
+            await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm.Id);
+
             var farmForReturn = _mapper.Map<FarmDetailsDto>(farm);
-            farmForReturn.PetsCount = farm.Pets.Count();
+            farmForReturn.PetsCount = farm.Pets.Count;
 
             return farmForReturn;
         }
