@@ -8,6 +8,8 @@ namespace Infrastructure.Persistance.Repositories
         private IUserRepository _userRepository;
         private IFarmRepository _farmRepository;
         private IPetRepository _petRepository;
+        private IFeedingHistoryRepository _feedingHistoryRepository;
+        private IDrinkingHistoryRepository _drinkingHistoryRepository;
 
         public RepositoryManager(AppDbContext repositoryContext)
         {
@@ -40,6 +42,26 @@ namespace Infrastructure.Persistance.Repositories
                 if (_petRepository == null)
                     _petRepository = new PetRepository(_repositoryContext);
                 return _petRepository;
+            }
+        }
+
+        public IFeedingHistoryRepository FeedingHistoryRepository
+        {
+            get
+            {
+                if (_feedingHistoryRepository == null)
+                    _feedingHistoryRepository = new FeedingHistoryRepository(_repositoryContext);
+                return _feedingHistoryRepository;
+            }
+        }
+
+        public IDrinkingHistoryRepository DrinkingHistoryRepository
+        {
+            get
+            {
+                if (_drinkingHistoryRepository == null)
+                    _drinkingHistoryRepository = new DrinkingHistoryRepository(_repositoryContext);
+                return _drinkingHistoryRepository;
             }
         }
 
