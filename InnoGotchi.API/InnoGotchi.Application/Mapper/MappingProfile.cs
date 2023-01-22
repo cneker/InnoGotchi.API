@@ -9,27 +9,29 @@ namespace InnoGotchi.Application.Mapper
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile(ICalculatePetAgeService calculatePetAgeService)
+        public MappingProfile(IPetConditionService petConditionService)
         {
             CreateMap<UserForRegistrationDto, User>();
             CreateMap<UserInfoDto, User>();
 
             CreateMap<Farm, FarmOverviewDto>();
-            CreateMap<Farm, FarmDetailsDto>();
+            CreateMap<Farm, FarmDetailsDto>()
+                .BeforeMap(async (src, dst) => 
+                    await petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(dst.Id));
             CreateMap<Farm, FarmStatisticsDto>();
             CreateMap<FarmForUpdateDto, Farm>();
             CreateMap<FarmForCreationDto, Farm>();
 
             CreateMap<Pet, PetDetailsDto>()
-                 .ForMember(p => p.Age,
-                    opt => opt.MapFrom(p => calculatePetAgeService.CalculateAge(p.Birthday, p.DeathDay)))
+                .ForMember(p => p.Age,
+                    opt => opt.MapFrom(p => petConditionService.CalculateAge(p)))
                 .ForMember(p => p.IsAlive,
-                    opt => opt.MapFrom(p => p.DeathDay == null));
+                    opt => opt.MapFrom(p => petConditionService.IsPetAlive(p)));
             CreateMap<Pet, PetOverviewDto>()
                 .ForMember(p => p.Age, 
-                    opt => opt.MapFrom(p => calculatePetAgeService.CalculateAge(p.Birthday, p.DeathDay)))
+                    opt => opt.MapFrom(p => petConditionService.CalculateAge(p)))
                 .ForMember(p => p.IsAlive, 
-                    opt => opt.MapFrom(p => p.DeathDay == null));
+                    opt => opt.MapFrom(p => petConditionService.IsPetAlive(p)));
             CreateMap<PetForCreationDto, Pet>();
             CreateMap<PetForUpdateDto, Pet>();
         }
