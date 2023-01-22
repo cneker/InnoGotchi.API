@@ -17,12 +17,21 @@ namespace InnoGotchi.Application.Mapper
             CreateMap<Farm, FarmOverviewDto>();
             CreateMap<Farm, FarmDetailsDto>();
             CreateMap<Farm, FarmStatisticsDto>();
+            CreateMap<FarmForUpdateDto, Farm>();
+            CreateMap<FarmForCreationDto, Farm>();
 
+            CreateMap<Pet, PetDetailsDto>()
+                 .ForMember(p => p.Age,
+                    opt => opt.MapFrom(p => calculatePetAgeService.CalculateAge(p.Birthday, p.DeathDay)))
+                .ForMember(p => p.IsAlive,
+                    opt => opt.MapFrom(p => p.DeathDay == null));
             CreateMap<Pet, PetOverviewDto>()
                 .ForMember(p => p.Age, 
                     opt => opt.MapFrom(p => calculatePetAgeService.CalculateAge(p.Birthday, p.DeathDay)))
                 .ForMember(p => p.IsAlive, 
                     opt => opt.MapFrom(p => p.DeathDay == null));
+            CreateMap<PetForCreationDto, Pet>();
+            CreateMap<PetForUpdateDto, Pet>();
         }
     }
 }
