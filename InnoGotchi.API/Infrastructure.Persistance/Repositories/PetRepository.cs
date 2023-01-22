@@ -18,10 +18,14 @@ namespace Infrastructure.Persistance.Repositories
 
         public async Task<IEnumerable<Pet>> GetPetsByFarmIdAsync(Guid farmId, bool trackChanges) =>
             await GetByCondition(p => p.FarmId == farmId, trackChanges)
+            .Include(p => p.FeedingRecords)
+            .Include(p => p.DrinkingRecords)
             .ToListAsync();
 
         public async Task<Pet> GetPetByIdAsync(Guid id, bool trackChanges) =>
             await GetByCondition(p => p.Id == id, trackChanges)
+            .Include(p => p.FeedingRecords)
+            .Include(p => p.DrinkingRecords)
             .SingleOrDefaultAsync();
 
         public async Task CreatePetAsync(Pet pet) =>
