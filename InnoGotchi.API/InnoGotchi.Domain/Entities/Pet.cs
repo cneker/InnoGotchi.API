@@ -11,10 +11,6 @@ namespace InnoGotchi.Domain.Entities
         public int HappynessDayCount { get; set; }
         public HungerLevel HungerLevel { get; set; }
         public ThirstyLevel ThirstyLevel { get; set; }
-        public DateTime LastFed { get; set; }
-        public DateTime LastDrank { get; set; }
-        public double FeedingPeriod { get; set; }
-        public double ThirstQuenchingPeriod { get; set; }
         public Body Body { get; set; }
         public Eye Eye { get; set; }
         public Nose Nose { get; set; }
@@ -22,5 +18,7 @@ namespace InnoGotchi.Domain.Entities
         public Guid FarmId { get; set; }
 
         public Farm Farm { get; set; }
+        public ICollection<FeedingRecord> FeedingRecords { get; set; }
+        public ICollection<DrinkingRecord> DrinkingRecords { get; set; }
     }
 }
