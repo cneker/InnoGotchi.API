@@ -13,17 +13,20 @@ namespace Infrastructure.Services
         private readonly IAuthenticationService _authService;
         private readonly IMapper _mapper;
         private readonly IValidator<UserForRegistrationDto> _regValidator;
-        private readonly IValidator<UserForUpdateDto> _updateValidator;
+        private readonly IValidator<UserInfoForUpdateDto> _updateInfoValidator;
+        private readonly IValidator<PasswordChangingDto> _updatePasswordValidator;
 
 
         public UserService(IRepositoryManager repositoryManager, IAuthenticationService authenticationService, 
-            IMapper mapper, IValidator<UserForRegistrationDto> regValidator, IValidator<UserForUpdateDto> updateValidator)
+            IMapper mapper, IValidator<UserForRegistrationDto> regValidator, IValidator<UserInfoForUpdateDto> updateInfoValidator,
+            IValidator<PasswordChangingDto> updatePasswordValidator)
         {
             _repositoryManager = repositoryManager;
             _authService = authenticationService;
             _mapper = mapper;
             _regValidator = regValidator;
-            _updateValidator = updateValidator;
+            _updateInfoValidator = updateInfoValidator;
+            _updatePasswordValidator = updatePasswordValidator;
         }
 
         public async Task<Guid> CreateUserAsync(UserForRegistrationDto userForReg)
@@ -46,7 +49,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<UserInfoDto>> GetUsersInfoAsync() =>
             _mapper.Map<IEnumerable<UserInfoDto>>(await _repositoryManager.UserRepository.GetUsersAsync(false));
 
-        public async void DeleteUserById(Guid id)
+        public async Task DeleteUserById(Guid id)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, false);
             if (user == null)
@@ -54,6 +57,8 @@ namespace Infrastructure.Services
 
             _repositoryManager.FarmRepository.DeleteFarm(user.UserFarm);
             _repositoryManager.UserRepository.DeleteUser(user);
+
+            await _repositoryManager.SaveAsync();
         }
 
         public async Task<UserInfoDto> GetUserInfoByIdAsync(Guid id)
@@ -67,9 +72,9 @@ namespace Infrastructure.Services
             return userInfo;
         }
 
-        public async Task UpdatePasswordAsync(Guid id, UserForUpdateDto userForUpdate)
+        public async Task UpdatePasswordAsync(Guid id, PasswordChangingDto passwordForUpdate)
         {
-            var valResult = await _updateValidator.ValidateAsync(userForUpdate);
+            var valResult = await _updatePasswordValidator.ValidateAsync(passwordForUpdate);
             if (!valResult.IsValid)
                 throw new Exception("invalid data");
 
@@ -77,14 +82,14 @@ namespace Infrastructure.Services
             if (user == null)
                 throw new Exception("user not found");
 
-            user = _mapper.Map<User>(userForUpdate);
+            user.PasswordHash = _authService.CreatePasswordHash(passwordForUpdate.NewPassword);
 
-            user.PasswordHash = _authService.CreatePasswordHash(userForUpdate.NewPassword);
+            await _repositoryManager.SaveAsync();
         }
 
-        public async Task UpdateUserInfoAsync(Guid id, UserForUpdateDto userForUpdate)
+        public async Task UpdateUserInfoAsync(Guid id, UserInfoForUpdateDto userForUpdate)
         {
-            var valResult = await _updateValidator.ValidateAsync(userForUpdate);
+            var valResult = await _updateInfoValidator.ValidateAsync(userForUpdate);
             if (!valResult.IsValid)
                 throw new Exception("invalid data");
 
@@ -93,6 +98,8 @@ namespace Infrastructure.Services
                 throw new Exception("user not found");
 
             _mapper.Map(userForUpdate, user);
+
+            await _repositoryManager.SaveAsync();
         }
     }
 }

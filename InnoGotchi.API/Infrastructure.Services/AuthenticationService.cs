@@ -2,8 +2,6 @@
 using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.User;
-using InnoGotchi.Domain.Entities;
-using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Services
 {
@@ -11,7 +9,7 @@ namespace Infrastructure.Services
     {
         private readonly IRepositoryManager _repositoryManager;
         private readonly IGenerateTokenService _tokenService;
-        private User _user;
+
         public AuthenticationService(IRepositoryManager repositoryManager,
             IGenerateTokenService tokenService)
         {
