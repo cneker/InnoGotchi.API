@@ -3,9 +3,9 @@ using InnoGotchi.Application.DataTransferObjects.User;
 
 namespace InnoGotchi.Application.Validators.User
 {
-    public class UserForUpdateDtoValidator : AbstractValidator<UserForUpdateDto>
+    public class UserInfoForUpdateDtoValidator : AbstractValidator<UserInfoForUpdateDto>
     {
-        public UserForUpdateDtoValidator()
+        public UserInfoForUpdateDtoValidator()
         {
             RuleFor(u => u.FirstName)
                 .NotEmpty()
@@ -13,7 +13,7 @@ namespace InnoGotchi.Application.Validators.User
             RuleFor(u => u.LastName)
                 .NotEmpty()
                 .Length(1, 30);
-            RuleFor(u => u.NewAvatar)
+            RuleFor(u => u.AvatarPath)
                 .NotEmpty();
         }
     }
