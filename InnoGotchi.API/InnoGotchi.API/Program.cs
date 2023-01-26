@@ -1,5 +1,7 @@
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using InnoGotchi.API.Extensions;
+using InnoGotchi.API.MIddlewares;
 using InnoGotchi.Application.Validators.User;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,14 +18,13 @@ builder.Services.ConfigurePetConditionService();
 builder.Services.ConfigurePetService();
 builder.Services.ConfigureUserService();
 builder.Services.ConfigureAutoMapper();
+builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<UserForRegistrationDtoValidator>();
+builder.Services.ConfigurActionFilters();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
-builder.Services.AddControllers(opt =>
-{
-    opt.SuppressAsyncSuffixInActionNames = false;
-});
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -33,6 +34,8 @@ if (app.Environment.IsDevelopment())
     //app.UseSwagger();
     //app.UseSwaggerUI();
 }
+
+
 
 app.UseHttpsRedirection();
 app.UseRouting();

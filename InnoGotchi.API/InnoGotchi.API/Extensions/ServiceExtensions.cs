@@ -2,6 +2,7 @@
 using Infrastructure.Persistance;
 using Infrastructure.Persistance.Repositories;
 using Infrastructure.Services;
+using InnoGotchi.API.Filters.ActionFilters;
 using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.Mapper;
@@ -46,5 +47,10 @@ namespace InnoGotchi.API.Extensions
 
         public static void ConfigureUserService(this IServiceCollection services) =>
             services.AddScoped<IUserService, UserService>();
+
+        public static void ConfigurActionFilters(this IServiceCollection services)
+        {
+            services.AddScoped<ValidationFilterAttribute>();
+        }
     }
 }
