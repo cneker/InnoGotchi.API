@@ -17,11 +17,7 @@ namespace InnoGotchi.Application.Mapper
                 .ForMember(u => u.PasswordHash, opt => opt.Ignore())
                 .ForMember(u => u.UserFarm, opt => opt.Ignore())
                 .ForMember(u => u.FriendsFarms, opt => opt.Ignore());
-            CreateMap<UserInfoDto, User>()
-                .ForMember(u => u.AvatarPath, opt => opt.Ignore())
-                .ForMember(u => u.PasswordHash, opt => opt.Ignore())
-                .ForMember(u => u.UserFarm, opt => opt.Ignore())
-                .ForMember(u => u.FriendsFarms, opt => opt.Ignore());
+            CreateMap<User, UserInfoDto>();
 
             CreateMap<Farm, FarmOverviewDto>();
             CreateMap<Farm, FarmDetailsDto>()
