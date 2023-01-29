@@ -101,9 +101,7 @@ namespace Tests.Services
             repMock.Setup(a => a.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), false))
                 .Returns(Task.FromResult<User>(null));
 
-            var tokenMock = new Mock<IGenerateTokenService>();
-
-            var service = new AuthenticationService(repMock.Object, tokenMock.Object);
+            var service = new AuthenticationService(repMock.Object, null);
 
             //Act
             Func<Task> result = async () => await service.SignInAsync(userDto);
@@ -111,7 +109,6 @@ namespace Tests.Services
             //Assert
             await result.Should().ThrowAsync<Exception>().WithMessage("not found");
             repMock.Verify(a => a.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), false), Times.Once);
-            tokenMock.Verify(a => a.GenerateToken(It.IsAny<User>()), Times.Never);
         }
 
         [Fact]
@@ -131,9 +128,7 @@ namespace Tests.Services
             repMock.Setup(a => a.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), false))
                 .Returns(Task.FromResult(user));
 
-            var tokenMock = new Mock<IGenerateTokenService>();
-
-            var service = new AuthenticationService(repMock.Object, tokenMock.Object);
+            var service = new AuthenticationService(repMock.Object, null);
 
             //Act
             Func<Task> result = async () => await service.SignInAsync(userDto);
@@ -141,7 +136,6 @@ namespace Tests.Services
             //Assert
             await result.Should().ThrowAsync<Exception>().WithMessage("wrong password");
             repMock.Verify(a => a.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), false), Times.Once);
-            tokenMock.Verify(a => a.GenerateToken(It.IsAny<User>()), Times.Never);
         }
     }
 }

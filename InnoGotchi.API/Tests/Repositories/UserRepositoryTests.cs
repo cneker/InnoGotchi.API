@@ -30,7 +30,7 @@ namespace Tests.Repositories
         }
 
         [Fact]
-        public async Task GetUserByIdAsync_ReturnsUser_WhenUserExistsAndPassingIdIsValid()
+        public async Task GetUserByIdAsync_ReturnsUser_WhenUserExistsAndPassedIdIsValid()
         {
             //Arrange
             var userId = Guid.Parse("8cd6c906-81c5-4717-8428-bfebe34d0f09");
@@ -60,7 +60,7 @@ namespace Tests.Repositories
         }
 
         [Fact]
-        public async Task GetUserByEmailAsync_ReturnsUser_WhenUserExistsAndPassingEmailIsValid()
+        public async Task GetUserByEmailAsync_ReturnsUser_WhenUserExistsAndPassedEmailIsValid()
         {
             //Arrange
             var userEmail = "email1@mail.com";
