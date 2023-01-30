@@ -1,4 +1,5 @@
-﻿using InnoGotchi.Application.Contracts.Services;
+﻿using InnoGotchi.API.Filters.ActionFilters;
+using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,10 +7,10 @@ namespace InnoGotchi.API.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
         }
@@ -22,7 +23,7 @@ namespace InnoGotchi.API.Controllers
             return Ok(usersDto);
         }
 
-        [HttpGet("profile/{id}", Name = "GetUser")]
+        [HttpGet("{id}", Name = "GetUser")]
         public async Task<IActionResult> GetUser(Guid id)
         {
             var userDto = await _userService.GetUserInfoByIdAsync(id);
@@ -31,6 +32,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateUser([FromBody] UserForRegistrationDto userDto)
         {
             var userId = await _userService.CreateUserAsync(userDto);
@@ -38,7 +40,8 @@ namespace InnoGotchi.API.Controllers
             return CreatedAtRoute("GetUser", new { id = userId }, userId);
         }
 
-        [HttpPut("profile/{id}")]
+        [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateUserInfo(Guid id, [FromBody] UserInfoForUpdateDto userDto)
         {
             await _userService.UpdateUserInfoAsync(id, userDto);
@@ -46,7 +49,8 @@ namespace InnoGotchi.API.Controllers
             return NoContent();
         }
 
-        [HttpPut("profile/change-password/{id}")]
+        [HttpPut("{id}/change-password")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> ChangeUserPassword(Guid id, [FromBody] PasswordChangingDto passwordDto)
         {
             await _userService.UpdatePasswordAsync(id, passwordDto);
