@@ -4,6 +4,7 @@ using Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistance.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230129110825_fixed-hunger-and-thirsty-levels-and-birthday-value")]
+    partial class fixedhungerandthirstylevelsandbirthdayvalue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,43 +40,14 @@ namespace Infrastructure.Persistance.Migrations
                     b.ToTable("FarmUser");
                 });
 
-            modelBuilder.Entity("InnoGotchi.Domain.Entities.Farm", b =>
+            modelBuilder.Entity("InnoGotchi.Domain.Entities.DrinkingRecord", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Farms");
-                });
-
-            modelBuilder.Entity("InnoGotchi.Domain.Entities.HungryStateChanges", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ChangesDate")
+                    b.Property<DateTime>("DringkingDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsFeeding")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<Guid>("PetId")
                         .HasColumnType("uniqueidentifier");
@@ -82,7 +56,47 @@ namespace Infrastructure.Persistance.Migrations
 
                     b.HasIndex("PetId");
 
-                    b.ToTable("HungryStateChangesHistory");
+                    b.ToTable("DrinkingHistory");
+                });
+
+            modelBuilder.Entity("InnoGotchi.Domain.Entities.Farm", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Farms");
+                });
+
+            modelBuilder.Entity("InnoGotchi.Domain.Entities.FeedingRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("FeedingDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PetId");
+
+                    b.ToTable("FeedingHistory");
                 });
 
             modelBuilder.Entity("InnoGotchi.Domain.Entities.Pet", b =>
@@ -123,7 +137,7 @@ namespace Infrastructure.Persistance.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Nose")
                         .HasColumnType("int");
@@ -137,34 +151,7 @@ namespace Infrastructure.Persistance.Migrations
 
                     b.HasIndex("FarmId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("Pets");
-                });
-
-            modelBuilder.Entity("InnoGotchi.Domain.Entities.ThirstyStateChanges", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ChangesDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDrinking")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<Guid>("PetId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PetId");
-
-                    b.ToTable("ThirstyStateChangesHistory");
                 });
 
             modelBuilder.Entity("InnoGotchi.Domain.Entities.User", b =>
@@ -181,7 +168,7 @@ namespace Infrastructure.Persistance.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -196,9 +183,6 @@ namespace Infrastructure.Persistance.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -218,6 +202,17 @@ namespace Infrastructure.Persistance.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("InnoGotchi.Domain.Entities.DrinkingRecord", b =>
+                {
+                    b.HasOne("InnoGotchi.Domain.Entities.Pet", "Pet")
+                        .WithMany("DrinkingRecords")
+                        .HasForeignKey("PetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pet");
+                });
+
             modelBuilder.Entity("InnoGotchi.Domain.Entities.Farm", b =>
                 {
                     b.HasOne("InnoGotchi.Domain.Entities.User", "User")
@@ -229,10 +224,10 @@ namespace Infrastructure.Persistance.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("InnoGotchi.Domain.Entities.HungryStateChanges", b =>
+            modelBuilder.Entity("InnoGotchi.Domain.Entities.FeedingRecord", b =>
                 {
                     b.HasOne("InnoGotchi.Domain.Entities.Pet", "Pet")
-                        .WithMany("HungryStateChangesHistory")
+                        .WithMany("FeedingRecords")
                         .HasForeignKey("PetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -251,17 +246,6 @@ namespace Infrastructure.Persistance.Migrations
                     b.Navigation("Farm");
                 });
 
-            modelBuilder.Entity("InnoGotchi.Domain.Entities.ThirstyStateChanges", b =>
-                {
-                    b.HasOne("InnoGotchi.Domain.Entities.Pet", "Pet")
-                        .WithMany("ThirstyStateChangesHistory")
-                        .HasForeignKey("PetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pet");
-                });
-
             modelBuilder.Entity("InnoGotchi.Domain.Entities.Farm", b =>
                 {
                     b.Navigation("Pets");
@@ -269,9 +253,9 @@ namespace Infrastructure.Persistance.Migrations
 
             modelBuilder.Entity("InnoGotchi.Domain.Entities.Pet", b =>
                 {
-                    b.Navigation("HungryStateChangesHistory");
+                    b.Navigation("DrinkingRecords");
 
-                    b.Navigation("ThirstyStateChangesHistory");
+                    b.Navigation("FeedingRecords");
                 });
 
             modelBuilder.Entity("InnoGotchi.Domain.Entities.User", b =>
