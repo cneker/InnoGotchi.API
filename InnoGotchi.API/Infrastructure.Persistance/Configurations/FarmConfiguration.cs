@@ -11,6 +11,8 @@ namespace Infrastructure.Persistance.Configurations
             builder.HasMany(f => f.Pets)
                 .WithOne(p => p.Farm)
                 .HasForeignKey(p => p.FarmId);
+            builder.HasIndex(p => p.Name)
+                .IsUnique();
         }
     }
 }

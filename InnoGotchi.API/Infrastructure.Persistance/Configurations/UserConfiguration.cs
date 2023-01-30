@@ -14,6 +14,8 @@ namespace Infrastructure.Persistance.Configurations
                 .OnDelete(DeleteBehavior.NoAction);
             builder.HasMany(u => u.FriendsFarms)
                 .WithMany(f => f.Collaborators);
+            builder.HasIndex(u => u.Email)
+                .IsUnique();
 
             builder.Property(u => u.AvatarPath)
                 .HasDefaultValue("default.jpg");

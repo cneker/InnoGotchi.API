@@ -4,10 +4,10 @@ namespace InnoGotchi.Application.Contracts.Repositories
 {
     public interface IFeedingHistoryRepository
     {
-        Task<IEnumerable<FeedingRecord>> GetHistoryByFarmIdAsync(Guid farmId, bool trackChanges);
-        Task<FeedingRecord> GetLastFedByPetIdAsync(Guid petId, bool trackChanges);
-        Task CreateRecordAsync(FeedingRecord record);
-        void DeleteRecord(FeedingRecord record);
+        Task<IEnumerable<HungryStateChanges>> GetHistoryByFarmIdAsync(Guid farmId, bool trackChanges);
+        Task<HungryStateChanges> GetLastFedByPetIdAsync(Guid petId, bool trackChanges);
+        Task CreateRecordAsync(HungryStateChanges record);
+        void DeleteRecord(HungryStateChanges record);
 
     }
 }

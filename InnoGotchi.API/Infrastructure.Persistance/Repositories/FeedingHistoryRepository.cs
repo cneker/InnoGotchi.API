@@ -4,26 +4,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistance.Repositories
 {
-    public class FeedingHistoryRepository : RepositoryBase<FeedingRecord>, IFeedingHistoryRepository
+    public class FeedingHistoryRepository : RepositoryBase<HungryStateChanges>, IFeedingHistoryRepository
     {
         public FeedingHistoryRepository(AppDbContext repositoryContext) 
             : base(repositoryContext)
         {
         }
 
-        public async Task<IEnumerable<FeedingRecord>> GetHistoryByFarmIdAsync(Guid farmId, bool trackChanges) =>
+        public async Task<IEnumerable<HungryStateChanges>> GetHistoryByFarmIdAsync(Guid farmId, bool trackChanges) =>
             await GetAll(trackChanges)
             .Include(r => r.Pet)
             .Where(r => r.Pet.FarmId == farmId)
             .ToListAsync();
 
-        public async Task<FeedingRecord> GetLastFedByPetIdAsync(Guid petId, bool trackChanges) =>
+        public async Task<HungryStateChanges> GetLastFedByPetIdAsync(Guid petId, bool trackChanges) =>
             await GetByCondition(r => r.PetId == petId, trackChanges).LastOrDefaultAsync();
 
-        public async Task CreateRecordAsync(FeedingRecord record) =>
+        public async Task CreateRecordAsync(HungryStateChanges record) =>
             await Create(record);
 
-        public void DeleteRecord(FeedingRecord record)
+        public void DeleteRecord(HungryStateChanges record)
         {
             Delete(record);
         }

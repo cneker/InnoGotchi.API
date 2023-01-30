@@ -9,15 +9,17 @@ namespace Infrastructure.Persistance.Configurations
     {
         public void Configure(EntityTypeBuilder<Pet> builder)
         {
-            builder.HasMany(p => p.FeedingRecords)
+            builder.HasMany(p => p.HungryStateChangesHistory)
                 .WithOne(fr => fr.Pet)
                 .HasForeignKey(fr => fr.PetId);
-            builder.HasMany(p => p.DrinkingRecords)
+            builder.HasMany(p => p.ThirstyStateChangesHistory)
                 .WithOne(dr => dr.Pet)
                 .HasForeignKey(dr => dr.PetId);
+            builder.HasIndex(p => p.Name)
+                .IsUnique();
 
             builder.Property(p => p.Birthday)
-                .HasDefaultValue(DateTime.Now);
+                .HasDefaultValueSql("GETDATE()");
             builder.Property(p => p.HappynessDayCount)
                 .HasDefaultValue(0);
             builder.Property(p => p.HungerLevel)
