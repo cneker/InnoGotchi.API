@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.Domain", "InnoGo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.Application", "InnoGotchi.Application\InnoGotchi.Application.csproj", "{CD00DE17-CB7A-4C2C-A18D-E3846CDA22C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Persistance", "Infrastructure.Persistance\Infrastructure.Persistance.csproj", "{DC0453DE-5C7C-4A87-B9F0-CABA41050C16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Persistance", "Infrastructure.Persistance\Infrastructure.Persistance.csproj", "{DC0453DE-5C7C-4A87-B9F0-CABA41050C16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Services", "Infrastructure.Services\Infrastructure.Services.csproj", "{CC2A735E-784D-4B54-8D4A-8CA862BE523C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Services", "Infrastructure.Services\Infrastructure.Services.csproj", "{CC2A735E-784D-4B54-8D4A-8CA862BE523C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{CC2A735E-784D-4B54-8D4A-8CA862BE523C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC2A735E-784D-4B54-8D4A-8CA862BE523C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC2A735E-784D-4B54-8D4A-8CA862BE523C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -24,8 +24,4 @@
     <ProjectReference Include="..\Infrastructure.Services\Infrastructure.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="MIddlewares\" />
-  </ItemGroup>
-
 </Project>
