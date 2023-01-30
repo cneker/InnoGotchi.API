@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.User;
+using InnoGotchi.Application.Exceptions;
 using InnoGotchi.Domain.Entities;
 
 namespace Infrastructure.Services
@@ -12,32 +12,21 @@ namespace Infrastructure.Services
         private readonly IRepositoryManager _repositoryManager;
         private readonly IAuthenticationService _authService;
         private readonly IMapper _mapper;
-        private readonly IValidator<UserForRegistrationDto> _regValidator;
-        private readonly IValidator<UserInfoForUpdateDto> _updateInfoValidator;
-        private readonly IValidator<PasswordChangingDto> _updatePasswordValidator;
 
 
-        public UserService(IRepositoryManager repositoryManager, IAuthenticationService authenticationService, 
-            IMapper mapper, IValidator<UserForRegistrationDto> regValidator, IValidator<UserInfoForUpdateDto> updateInfoValidator,
-            IValidator<PasswordChangingDto> updatePasswordValidator)
+        public UserService(IRepositoryManager repositoryManager, 
+            IAuthenticationService authenticationService, IMapper mapper)
         {
             _repositoryManager = repositoryManager;
             _authService = authenticationService;
             _mapper = mapper;
-            _regValidator = regValidator;
-            _updateInfoValidator = updateInfoValidator;
-            _updatePasswordValidator = updatePasswordValidator;
         }
 
         public async Task<Guid> CreateUserAsync(UserForRegistrationDto userForReg)
         {
-            var valResult = await _regValidator.ValidateAsync(userForReg);
-            if (!valResult.IsValid)
-                throw new Exception("invalid data");
-
             var user = await _repositoryManager.UserRepository.GetUserByEmailAsync(userForReg.Email, false);
             if(user != null)
-                throw new Exception("the email has already registered");
+                throw new AlreadyExistsException("The email has already registered");
 
             user = _mapper.Map<User>(userForReg);
             user.PasswordHash = _authService.CreatePasswordHash(userForReg.Password);
@@ -53,9 +42,10 @@ namespace Infrastructure.Services
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, false);
             if (user == null)
-                throw new Exception("user not found");
+                throw new NotFoundException("User not found");
 
-            _repositoryManager.FarmRepository.DeleteFarm(user.UserFarm);
+            if (user.UserFarm != null)
+                _repositoryManager.FarmRepository.DeleteFarm(user.UserFarm);
             _repositoryManager.UserRepository.DeleteUser(user);
 
             await _repositoryManager.SaveAsync();
@@ -65,7 +55,7 @@ namespace Infrastructure.Services
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, false);
             if (user == null)
-                throw new Exception("user not found");
+                throw new NotFoundException("User not found");
 
             var userInfo = _mapper.Map<UserInfoDto>(user);
 
@@ -74,13 +64,9 @@ namespace Infrastructure.Services
 
         public async Task UpdatePasswordAsync(Guid id, PasswordChangingDto passwordForUpdate)
         {
-            var valResult = await _updatePasswordValidator.ValidateAsync(passwordForUpdate);
-            if (!valResult.IsValid)
-                throw new Exception("invalid data");
-
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, true);
             if (user == null)
-                throw new Exception("user not found");
+                throw new NotFoundException("User not found");
 
             user.PasswordHash = _authService.CreatePasswordHash(passwordForUpdate.NewPassword);
 
@@ -89,13 +75,9 @@ namespace Infrastructure.Services
 
         public async Task UpdateUserInfoAsync(Guid id, UserInfoForUpdateDto userForUpdate)
         {
-            var valResult = await _updateInfoValidator.ValidateAsync(userForUpdate);
-            if (!valResult.IsValid)
-                throw new Exception("invalid data");
-
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, true);
             if (user == null)
-                throw new Exception("user not found");
+                throw new NotFoundException("User not found");
 
             _mapper.Map(userForUpdate, user);
 

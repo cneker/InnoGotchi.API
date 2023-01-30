@@ -4,7 +4,7 @@ namespace InnoGotchi.Application.Contracts.Services
 {
     public interface IPetConditionService
     {
-        Task UpdatePetsFeedingAndDrinkingLevelsByFarm(Guid farmId);
+        Task UpdatePetsFeedingAndDrinkingLevelsByFarm(Farm farm);
         Task<Pet> UpdatePetFeedingAndDrinkingLevels(Pet pet);
         bool IsPetAlive(Pet pet);
         int CalculateAge(Pet pet);

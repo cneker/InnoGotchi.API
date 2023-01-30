@@ -21,6 +21,7 @@ namespace Infrastructure.Services
 
         public async Task<string> SignInAsync(UserForAuthenticationDto userForAuth)
         {
+            //сюда бы валидатор добавить
             var user = await _repositoryManager.UserRepository
                 .GetUserByEmailAsync(userForAuth.Email, false);
 

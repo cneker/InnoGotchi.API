@@ -16,27 +16,37 @@ namespace Infrastructure.Services
         public bool IsPetAlive(Pet pet) =>
             pet.DeathDay == null;
 
-        public async Task UpdatePetsFeedingAndDrinkingLevelsByFarm(Guid farmId)
+        public async Task UpdatePetsFeedingAndDrinkingLevelsByFarm(Farm farm)
         {
-            var pets = await _repositoryManager.PetRepository.GetPetsByFarmIdAsync(farmId, true);
-            foreach (var pet in pets)
+            var pets = await _repositoryManager.PetRepository.GetPetsByFarmIdAsync(farm.Id, true);
+            foreach (var pet in farm.Pets)
             {
                 await UpdatePetFeedingAndDrinkingLevels(pet);
             }
+            farm.Pets = pets.ToList();
         }
 
         public async Task<Pet> UpdatePetFeedingAndDrinkingLevels(Pet pet)
         {
-            var lastFed = pet.FeedingRecords.Last();
-            var lastDrank = pet.DrinkingRecords.Last();
-            var hungryDuration = (DateTime.Now - lastFed.FeedingDate).TotalHours;
-            var thirstyDuration = (DateTime.Now - lastDrank.DringkingDate).TotalHours;
+            if (!IsPetAlive(pet))
+                return pet;
+
+            var lastHungryUpdate = pet.HungryStateChangesHistory
+                .OrderBy(f => f.ChangesDate).Last();
+            var lastThirstyUpdate = pet.ThirstyStateChangesHistory
+                .OrderBy(d => d.ChangesDate).Last();
+            var hungryDuration = (DateTime.Now - lastHungryUpdate.ChangesDate).TotalHours;
+            var thirstyDuration = (DateTime.Now - lastThirstyUpdate.ChangesDate).TotalHours;
             
             while(hungryDuration >= PetConfiguration.FeedingFrequencyInHours)
             {
                 hungryDuration -= PetConfiguration.FeedingFrequencyInHours;
                 pet.HungerLevel -= 1;
-                if(pet.HungerLevel == HungerLevel.Dead)
+
+                var feeding = new HungryStateChanges() { PetId = pet.Id, ChangesDate = DateTime.Now };
+                await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
+
+                if (pet.HungerLevel == HungerLevel.Dead)
                 {
                     pet.DeathDay = DateTime.Now;
                     break;
@@ -46,6 +56,10 @@ namespace Infrastructure.Services
             {
                 thirstyDuration -= PetConfiguration.DrinkingFrequencyInHours;
                 pet.ThirstyLevel -= 1;
+
+                var drinking = new ThirstyStateChanges() { PetId = pet.Id, ChangesDate = DateTime.Now };
+                await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
+
                 if (pet.ThirstyLevel == ThirstyLevel.Dead)
                 {
                     pet.DeathDay = DateTime.Now;

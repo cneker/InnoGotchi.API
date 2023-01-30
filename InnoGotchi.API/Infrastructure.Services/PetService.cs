@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.Pet;
+using InnoGotchi.Application.Exceptions;
 using InnoGotchi.Domain.Entities;
 using InnoGotchi.Domain.Enums;
 
@@ -12,34 +12,26 @@ namespace Infrastructure.Services
     {
         private readonly IRepositoryManager _repositoryManager;
         private readonly IMapper _mapper;
-        private readonly IValidator<PetForCreationDto> _createPetValidator;
-        private readonly IValidator<PetForUpdateDto> _updatePetValidator;
         private readonly IPetConditionService _petConditionService;
 
         public PetService(IRepositoryManager repositoryManager, IMapper mapper, 
-            IValidator<PetForCreationDto> createPetValidator,
-            IValidator<PetForUpdateDto> updatePetValidator,
             IPetConditionService petConditionService)
         {
             _repositoryManager = repositoryManager;
             _mapper = mapper;
-            _createPetValidator = createPetValidator;
-            _updatePetValidator = updatePetValidator;
             _petConditionService = petConditionService;
         }
 
         public async Task<Guid> CreatePetAsync(Guid farmId, PetForCreationDto petForCreation)
         {
-            var valResult = await _createPetValidator.ValidateAsync(petForCreation);
-            if (!valResult.IsValid)
-                throw new Exception("invalid data");
+            await CheckFarmExists(farmId);
 
             var pet = _mapper.Map<Pet>(petForCreation);
             pet.FarmId = farmId;
             await _repositoryManager.PetRepository.CreatePetAsync(pet);
 
-            var feeding = new FeedingRecord() { PetId = pet.Id, FeedingDate = DateTime.Now };
-            var drinking = new DrinkingRecord() { PetId = pet.Id, DringkingDate = DateTime.Now };
+            var feeding = new HungryStateChanges() { PetId = pet.Id, ChangesDate = DateTime.Now };
+            var drinking = new ThirstyStateChanges() { PetId = pet.Id, ChangesDate = DateTime.Now };
             await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
             await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
 
@@ -48,34 +40,40 @@ namespace Infrastructure.Services
             return pet.Id;
         }
 
-        public async Task FeedThePetAsync(Guid id)
+        public async Task FeedThePetAsync(Guid farmId, Guid id)
         {
+            await CheckFarmExists(farmId);
+
             //добавить проверку на свой-чужой
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
-                throw new Exception("pet not found");
+                throw new NotFoundException("Pet not found");
 
             if(!_petConditionService.IsPetAlive(pet))
-                throw new Exception("rest and peace");
+                throw new PetIsDeadException("Rest and peace");
 
-            var feeding = new FeedingRecord() { PetId = id, FeedingDate = DateTime.Now };
+            var feeding = new HungryStateChanges() 
+                { PetId = id, ChangesDate = DateTime.Now, IsFeeding = true };
             await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
 
             pet.HungerLevel = HungerLevel.Full;
             await _repositoryManager.SaveAsync();
         }
 
-        public async Task GiveADrinkToPetAsync(Guid id)
+        public async Task GiveADrinkToPetAsync(Guid farmId, Guid id)
         {
+            await CheckFarmExists(farmId);
+
             //добавить проверку на свой-чужой
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
-                throw new Exception("pet not found");
+                throw new NotFoundException("Pet not found");
 
             if (!_petConditionService.IsPetAlive(pet))
-                throw new Exception("rest and peace");
+                throw new PetIsDeadException("Rest and peace");
 
-            var drinking = new DrinkingRecord() { PetId = id, DringkingDate = DateTime.Now };
+            var drinking = new ThirstyStateChanges() 
+                { PetId = id, ChangesDate = DateTime.Now, IsDrinking = true };
             await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
 
             pet.ThirstyLevel = ThirstyLevel.Full;
@@ -91,14 +89,13 @@ namespace Infrastructure.Services
 
             return _mapper.Map<IEnumerable<PetOverviewDto>>(pets);
         }
-            
 
-        public async Task<PetDetailsDto> GetPetByIdAsync(Guid id)
+        public async Task<PetDetailsDto> GetPetByIdAsync(Guid farmId, Guid id)
         {
+            await CheckFarmExists(farmId);
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
-                throw new Exception("pet not found");
-
+                throw new NotFoundException("Pet not found");
             //UPDATE VITAL SIGNS AND SAVE
             await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
 
@@ -107,18 +104,23 @@ namespace Infrastructure.Services
             return petForReturn;
         }
 
-        public async Task UpdatePetNameAsync(Guid id, PetForUpdateDto petForUpdate)
+        public async Task UpdatePetNameAsync(Guid farmId, Guid id, PetForUpdateDto petForUpdate)
         {
-            var valResult = await _updatePetValidator.ValidateAsync(petForUpdate);
-            if (!valResult.IsValid)
-                throw new Exception("invalid data");
+            await CheckFarmExists(farmId);
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
-                throw new Exception("pet not found");
+                throw new NotFoundException("Pet not found");
 
-            _mapper.Map(pet, petForUpdate);
+            _mapper.Map(petForUpdate, pet);
             await _repositoryManager.SaveAsync();
+        }
+
+        private async Task CheckFarmExists(Guid farmId)
+        {
+            var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, false);
+            if (farm == null)
+                throw new NotFoundException("Farm not found");
         }
     }
 }
