@@ -1,9 +1,10 @@
 ﻿namespace InnoGotchi.Domain.Entities
 {
-    public class DrinkingRecord
+    public class ThirstyStateChanges
     {
         public Guid Id { get; set; }
-        public DateTime DringkingDate { get; set; }
+        public DateTime ChangesDate { get; set; }
+        public bool IsDrinking { get; set; }
         public Guid PetId { get; set; }
 
         public Pet Pet { get; set; }

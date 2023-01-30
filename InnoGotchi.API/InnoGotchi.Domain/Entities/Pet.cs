@@ -18,7 +18,7 @@ namespace InnoGotchi.Domain.Entities
         public Guid FarmId { get; set; }
 
         public Farm Farm { get; set; }
-        public ICollection<FeedingRecord> FeedingRecords { get; set; }
-        public ICollection<DrinkingRecord> DrinkingRecords { get; set; }
+        public ICollection<HungryStateChanges> HungryStateChangesHistory { get; set; }
+        public ICollection<ThirstyStateChanges> ThirstyStateChangesHistory { get; set; }
     }
 }
