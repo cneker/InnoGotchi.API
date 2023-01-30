@@ -18,11 +18,15 @@ namespace InnoGotchi.Application.Mapper
                 .ForMember(u => u.UserFarm, opt => opt.Ignore())
                 .ForMember(u => u.FriendsFarms, opt => opt.Ignore());
             CreateMap<User, UserInfoDto>();
+            CreateMap<UserInfoForUpdateDto, User>()
+                .ForMember(u => u.Id, opt => opt.Ignore()) 
+                .ForMember(u => u.Email, opt => opt.Ignore())
+                .ForMember(u => u.PasswordHash, opt => opt.Ignore())
+                .ForMember(u => u.UserFarm, opt => opt.Ignore())
+                .ForMember(u => u.FriendsFarms, opt => opt.Ignore());
 
             CreateMap<Farm, FarmOverviewDto>();
-            CreateMap<Farm, FarmDetailsDto>()
-                .BeforeMap(async (src, dst) =>
-                    await petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(dst.Id));
+            CreateMap<Farm, FarmDetailsDto>();
             CreateMap<Farm, FarmStatisticsDto>()
                 .ForMember(f => f.AlivePetsCount, opt => opt.Ignore())
                 .ForMember(f => f.DeadPetsCount, opt => opt.Ignore())
@@ -63,8 +67,8 @@ namespace InnoGotchi.Application.Mapper
                 .ForMember(p => p.ThirstyLevel, opt => opt.Ignore())
                 .ForMember(p => p.FarmId, opt => opt.Ignore())
                 .ForMember(p => p.Farm, opt => opt.Ignore())
-                .ForMember(p => p.FeedingRecords, opt => opt.Ignore())
-                .ForMember(p => p.DrinkingRecords, opt => opt.Ignore());
+                .ForMember(p => p.HungryStateChangesHistory, opt => opt.Ignore())
+                .ForMember(p => p.ThirstyStateChangesHistory, opt => opt.Ignore());
 
             CreateMap<PetForUpdateDto, Pet>()
                 .ForMember(p => p.Id, opt => opt.Ignore())
@@ -79,8 +83,8 @@ namespace InnoGotchi.Application.Mapper
                 .ForMember(p => p.Mouth, opt => opt.Ignore())
                 .ForMember(p => p.FarmId, opt => opt.Ignore())
                 .ForMember(p => p.Farm, opt => opt.Ignore())
-                .ForMember(p => p.FeedingRecords, opt => opt.Ignore())
-                .ForMember(p => p.DrinkingRecords, opt => opt.Ignore());
+                .ForMember(p => p.HungryStateChangesHistory, opt => opt.Ignore())
+                .ForMember(p => p.ThirstyStateChangesHistory, opt => opt.Ignore());
         }
     }
 }

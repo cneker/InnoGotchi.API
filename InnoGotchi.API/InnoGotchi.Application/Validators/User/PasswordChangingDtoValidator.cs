@@ -8,7 +8,9 @@ namespace InnoGotchi.Application.Validators.User
         public PasswordChangingDtoValidator()
         {
             RuleFor(p => p.NewPassword)
-                .NotEmpty();
+                .NotEmpty()
+                .Equal(p => p.ConfirmedPassword)
+                .NotEqual(p => p.OldPassword);
             RuleFor(p => p.OldPassword)
                 .NotEmpty();
         }
