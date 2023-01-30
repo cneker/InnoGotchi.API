@@ -1,7 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using InnoGotchi.API.Extensions;
-using InnoGotchi.API.MIddlewares;
+using InnoGotchi.API.Middlewares;
 using InnoGotchi.Application.Validators.User;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,7 +35,7 @@ if (app.Environment.IsDevelopment())
     //app.UseSwaggerUI();
 }
 
-
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseRouting();
