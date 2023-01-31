@@ -22,7 +22,7 @@ namespace Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<Guid> CreateUserAsync(UserForRegistrationDto userForReg)
+        public async Task<UserInfoDto> CreateUserAsync(UserForRegistrationDto userForReg)
         {
             var user = await _repositoryManager.UserRepository.GetUserByEmailAsync(userForReg.Email, false);
             if(user != null)
@@ -32,7 +32,8 @@ namespace Infrastructure.Services
             user.PasswordHash = _authService.CreatePasswordHash(userForReg.Password);
             await _repositoryManager.UserRepository.CreateUser(user);
             await _repositoryManager.SaveAsync();
-            return user.Id;
+
+            return _mapper.Map<UserInfoDto>(user);
         }
 
         public async Task<IEnumerable<UserInfoDto>> GetUsersInfoAsync() =>

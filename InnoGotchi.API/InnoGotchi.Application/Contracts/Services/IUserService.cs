@@ -4,7 +4,7 @@ namespace InnoGotchi.Application.Contracts.Services
 {
     public interface IUserService
     {
-        Task<Guid> CreateUserAsync(UserForRegistrationDto userForReg);
+        Task<UserInfoDto> CreateUserAsync(UserForRegistrationDto userForReg);
         Task<IEnumerable<UserInfoDto>> GetUsersInfoAsync();
         Task<UserInfoDto> GetUserInfoByIdAsync(Guid id);
         Task DeleteUserById(Guid id);
