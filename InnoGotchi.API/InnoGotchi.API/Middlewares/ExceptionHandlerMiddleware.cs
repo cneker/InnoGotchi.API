@@ -28,6 +28,7 @@ namespace InnoGotchi.API.Middlewares
                     AlreadyExistsException => StatusCodes.Status400BadRequest,
                     PetIsDeadException => StatusCodes.Status423Locked,
                     IncorrectRequestException => StatusCodes.Status400BadRequest,
+                    AccessDeniedException => StatusCodes.Status403Forbidden,
                     _ => StatusCodes.Status500InternalServerError
                 };
                 var message = JsonSerializer.Serialize(new { message = ex.Message });
