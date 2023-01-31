@@ -2,6 +2,7 @@
 using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.User;
+using InnoGotchi.Application.Exceptions;
 
 namespace Infrastructure.Services
 {
@@ -21,15 +22,14 @@ namespace Infrastructure.Services
 
         public async Task<string> SignInAsync(UserForAuthenticationDto userForAuth)
         {
-            //сюда бы валидатор добавить
             var user = await _repositoryManager.UserRepository
                 .GetUserByEmailAsync(userForAuth.Email, false);
 
             if (user == null)
-                throw new Exception("not found");
+                throw new NotFoundException("User not found");
 
             if (!VerifyPasswordHash(userForAuth.Password, user.PasswordHash))
-                throw new Exception("wrong password");
+                throw new IncorrectRequestException("Wrong password");
 
             return _tokenService.GenerateToken(user);
         }
