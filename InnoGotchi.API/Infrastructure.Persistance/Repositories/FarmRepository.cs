@@ -13,6 +13,7 @@ namespace Infrastructure.Persistance.Repositories
 
         public async Task<IEnumerable<Farm>> GetFarmsAsync(bool trackChanges) =>
             await GetAll(trackChanges)
+            .Include(p => p.Pets)
             .ToListAsync();
         //мб лучше по имени, тогда и смысл в нижестоящем методе пропадет
         public async Task<Farm> GetFarmByIdAsync(Guid id, bool trackChanges) =>
@@ -25,6 +26,10 @@ namespace Infrastructure.Persistance.Repositories
             await GetByCondition(f => f.UserId == userId, trackChanges)
             .Include(f => f.Collaborators)
             .Include(p => p.Pets)
+            .SingleOrDefaultAsync();
+
+        public async Task<Farm> GetFarmByNameAsync(string name, bool trackChanges) =>
+            await GetByCondition(f => f.Name == name, trackChanges)
             .SingleOrDefaultAsync();
 
         public async Task CreateFarm(Farm farm) =>

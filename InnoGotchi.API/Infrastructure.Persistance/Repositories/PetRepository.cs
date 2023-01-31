@@ -30,6 +30,10 @@ namespace Infrastructure.Persistance.Repositories
             .Include(p => p.ThirstyStateChangesHistory)
             .SingleOrDefaultAsync();
 
+        public async Task<Pet> GetPetByNameAsync(string name, bool trackChanges) =>
+            await GetByCondition(p => p.Name == name, trackChanges)
+            .SingleOrDefaultAsync();
+
         public async Task CreatePetAsync(Pet pet) =>
             await Create(pet);
 

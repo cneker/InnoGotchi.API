@@ -7,6 +7,7 @@ namespace InnoGotchi.Application.Contracts.Repositories
         Task<IEnumerable<Pet>> GetAllPetsAsync(bool trackChanges);
         Task<IEnumerable<Pet>> GetPetsByFarmIdAsync(Guid farmId, bool trackChanges);
         Task<Pet> GetPetByIdAsync(Guid id, bool trackChanges);
+        Task<Pet> GetPetByNameAsync(string name, bool trackChanges);
         Task<IEnumerable<Pet>> GetAlivePetsByFarmAsync(Guid farmId, bool trackChanges);
         Task<IEnumerable<Pet>> GetDeadPetsByFarmAsync(Guid farmId, bool trackChanges);
         Task CreatePetAsync(Pet pet);
