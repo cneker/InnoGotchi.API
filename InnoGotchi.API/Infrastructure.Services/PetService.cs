@@ -27,7 +27,7 @@ namespace Infrastructure.Services
             var farm = await CheckFarmExists(farmId);
 
             if(!CheckWhetherUserIsOwner(farm, userId))
-                throw new AccessDeniedExcepton("You are not the owner of this farm");
+                throw new AccessDeniedException("You are not the owner of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByNameAsync(petForCreation.Name, false);
             if(pet != null)
@@ -53,7 +53,7 @@ namespace Infrastructure.Services
 
             if(!CheckWhetherUserIsCollaborator(farm, userId))
                 if(!CheckWhetherUserIsOwner(farm, userId))
-                    throw new AccessDeniedExcepton("You are not the owner or collaborator of this farm");
+                    throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
@@ -76,7 +76,7 @@ namespace Infrastructure.Services
 
             if (!CheckWhetherUserIsCollaborator(farm, userId))
                 if (!CheckWhetherUserIsOwner(farm, userId))
-                    throw new AccessDeniedExcepton("You are not the owner or collaborator of this farm");
+                    throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
@@ -109,7 +109,7 @@ namespace Infrastructure.Services
 
             if (!CheckWhetherUserIsCollaborator(farm, userId))
                 if (!CheckWhetherUserIsOwner(farm, userId))
-                    throw new AccessDeniedExcepton("You are not the owner or collaborator of this farm");
+                    throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
@@ -127,7 +127,7 @@ namespace Infrastructure.Services
             var farm = await CheckFarmExists(farmId);
 
             if(!CheckWhetherUserIsOwner(farm, userId))
-                throw new AccessDeniedExcepton("You are not the owner of this farm");
+                throw new AccessDeniedException("You are not the owner of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
