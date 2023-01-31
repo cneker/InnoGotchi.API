@@ -35,9 +35,9 @@ namespace InnoGotchi.API.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateUser([FromBody] UserForRegistrationDto userDto)
         {
-            var userId = await _userService.CreateUserAsync(userDto);
+            var user = await _userService.CreateUserAsync(userDto);
 
-            return CreatedAtRoute("GetUser", new { id = userId }, userId);
+            return CreatedAtRoute("GetUser", new { id = user.Id }, user);
         }
 
         [HttpPut("{id}")]

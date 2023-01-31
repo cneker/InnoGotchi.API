@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
-    [Route("api/farms/{farmId}/pets")]
+    [Route("api/users/{userId}/farms/{farmId}/pets")]
     [ApiController]
     public class PetsController : ControllerBase
     {
@@ -24,43 +24,43 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetPet")]
-        public async Task<IActionResult> GetPet(Guid farmId, Guid id)
+        public async Task<IActionResult> GetPet(Guid userId, Guid farmId, Guid id)
         {
-            var pet = await _petService.GetPetByIdAsync(farmId, id);
+            var pet = await _petService.GetPetByIdAsync(userId, farmId, id);
 
             return Ok(pet);
         }
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> CreatePet(Guid farmId, [FromBody] PetForCreationDto petDto)
+        public async Task<IActionResult> CreatePet(Guid userId, Guid farmId, [FromBody] PetForCreationDto petDto)
         {
-            var petId = await _petService.CreatePetAsync(farmId, petDto);
+            var pet = await _petService.CreatePetAsync(userId, farmId, petDto);
 
-            return CreatedAtRoute("GetPet", new { farmId, id = petId }, petId);
+            return CreatedAtRoute("GetPet", new { userId, farmId, id = pet.Id }, pet);
         }
 
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> UpdatePetName(Guid farmId, Guid id, [FromBody] PetForUpdateDto petDto)
+        public async Task<IActionResult> UpdatePetName(Guid userId, Guid farmId, Guid id, [FromBody] PetForUpdateDto petDto)
         {
-            await _petService.UpdatePetNameAsync(farmId, id, petDto);
+            await _petService.UpdatePetNameAsync(userId, farmId, id, petDto);
 
             return NoContent();
         }
 
         [HttpPut("{id}/feed")]
-        public async Task<IActionResult> FeedThePet(Guid farmId, Guid id)
+        public async Task<IActionResult> FeedThePet(Guid userId, Guid farmId, Guid id)
         {
-            await _petService.FeedThePetAsync(farmId, id);
+            await _petService.FeedThePetAsync(userId, farmId, id);
 
             return NoContent();
         }
 
         [HttpPut("{id}/give-a-drink")]
-        public async Task<IActionResult> GiveADrinkToThePet(Guid farmId, Guid id)
+        public async Task<IActionResult> GiveADrinkToThePet(Guid userId, Guid farmId, Guid id)
         {
-            await _petService.GiveADrinkToPetAsync(farmId, id);
+            await _petService.GiveADrinkToPetAsync (userId, farmId, id);
 
             return NoContent();
         }

@@ -36,9 +36,9 @@ namespace InnoGotchi.API.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateFarm(Guid userId, [FromBody] FarmForCreationDto farmDto)
         {
-            var farmId = await _farmService.CreateFarmAsync(userId, farmDto);
+            var farm = await _farmService.CreateFarmAsync(userId, farmDto);
 
-            return CreatedAtRoute("GetFarmOverview", new { userId = userId }, farmId);
+            return CreatedAtRoute("GetFarmOverview", new { userId = userId }, farm);
         }
 
         [HttpGet("detail")]
