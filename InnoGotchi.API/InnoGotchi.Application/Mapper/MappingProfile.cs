@@ -25,8 +25,10 @@ namespace InnoGotchi.Application.Mapper
                 .ForMember(u => u.UserFarm, opt => opt.Ignore())
                 .ForMember(u => u.FriendsFarms, opt => opt.Ignore());
 
-            CreateMap<Farm, FarmOverviewDto>();
-            CreateMap<Farm, FarmDetailsDto>();
+            CreateMap<Farm, FarmOverviewDto>()
+                .ForMember(f => f.PetsCount, opt => opt.MapFrom(f => f.Pets.Count));
+            CreateMap<Farm, FarmDetailsDto>()
+                .ForMember(f => f.PetsCount, opt => opt.MapFrom(f => f.Pets.Count));
             CreateMap<Farm, FarmStatisticsDto>()
                 .ForMember(f => f.AlivePetsCount, opt => opt.Ignore())
                 .ForMember(f => f.DeadPetsCount, opt => opt.Ignore())
