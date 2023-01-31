@@ -22,11 +22,18 @@ namespace Infrastructure.Services
             _petConditionService = petConditionService;
         }
 
-        public async Task<Guid> CreatePetAsync(Guid farmId, PetForCreationDto petForCreation)
+        public async Task<PetOverviewDto> CreatePetAsync(Guid userId, Guid farmId, PetForCreationDto petForCreation)
         {
-            await CheckFarmExists(farmId);
+            var farm = await CheckFarmExists(farmId);
 
-            var pet = _mapper.Map<Pet>(petForCreation);
+            if(!CheckWhetherUserIsOwner(farm, userId))
+                throw new AccessDeniedExcepton("You are not the owner of this farm");
+
+            var pet = await _repositoryManager.PetRepository.GetPetByNameAsync(petForCreation.Name, false);
+            if(pet != null)
+                throw new IncorrectRequestException("This name has alredy registered");
+
+            pet = _mapper.Map<Pet>(petForCreation);
             pet.FarmId = farmId;
             await _repositoryManager.PetRepository.CreatePetAsync(pet);
 
@@ -37,14 +44,17 @@ namespace Infrastructure.Services
 
             await _repositoryManager.SaveAsync();
 
-            return pet.Id;
+            return _mapper.Map<PetOverviewDto>(pet);
         }
 
-        public async Task FeedThePetAsync(Guid farmId, Guid id)
+        public async Task FeedThePetAsync(Guid userId, Guid farmId, Guid id)
         {
-            await CheckFarmExists(farmId);
+            var farm = await CheckFarmExists(farmId);
 
-            //добавить проверку на свой-чужой
+            if(!CheckWhetherUserIsCollaborator(farm, userId))
+                if(!CheckWhetherUserIsOwner(farm, userId))
+                    throw new AccessDeniedExcepton("You are not the owner or collaborator of this farm");
+
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
                 throw new NotFoundException("Pet not found");
@@ -60,11 +70,14 @@ namespace Infrastructure.Services
             await _repositoryManager.SaveAsync();
         }
 
-        public async Task GiveADrinkToPetAsync(Guid farmId, Guid id)
+        public async Task GiveADrinkToPetAsync(Guid userId, Guid farmId, Guid id)
         {
-            await CheckFarmExists(farmId);
+            var farm = await CheckFarmExists(farmId);
 
-            //добавить проверку на свой-чужой
+            if (!CheckWhetherUserIsCollaborator(farm, userId))
+                if (!CheckWhetherUserIsOwner(farm, userId))
+                    throw new AccessDeniedExcepton("You are not the owner or collaborator of this farm");
+
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
                 throw new NotFoundException("Pet not found");
@@ -90,9 +103,14 @@ namespace Infrastructure.Services
             return _mapper.Map<IEnumerable<PetOverviewDto>>(pets);
         }
 
-        public async Task<PetDetailsDto> GetPetByIdAsync(Guid farmId, Guid id)
+        public async Task<PetDetailsDto> GetPetByIdAsync(Guid userId, Guid farmId, Guid id)
         {
-            await CheckFarmExists(farmId);
+            var farm = await CheckFarmExists(farmId);
+
+            if (!CheckWhetherUserIsCollaborator(farm, userId))
+                if (!CheckWhetherUserIsOwner(farm, userId))
+                    throw new AccessDeniedExcepton("You are not the owner or collaborator of this farm");
+
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
                 throw new NotFoundException("Pet not found");
@@ -104,23 +122,50 @@ namespace Infrastructure.Services
             return petForReturn;
         }
 
-        public async Task UpdatePetNameAsync(Guid farmId, Guid id, PetForUpdateDto petForUpdate)
+        public async Task UpdatePetNameAsync(Guid userId, Guid farmId, Guid id, PetForUpdateDto petForUpdate)
         {
-            await CheckFarmExists(farmId);
+            var farm = await CheckFarmExists(farmId);
+
+            if(!CheckWhetherUserIsOwner(farm, userId))
+                throw new AccessDeniedExcepton("You are not the owner of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
                 throw new NotFoundException("Pet not found");
 
+            if (pet.Name == petForUpdate.Name)
+                throw new IncorrectRequestException("This name has alredy registered");
+
             _mapper.Map(petForUpdate, pet);
             await _repositoryManager.SaveAsync();
         }
 
-        private async Task CheckFarmExists(Guid farmId)
+        private async Task<Farm> CheckFarmExists(Guid farmId)
         {
             var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, false);
+
             if (farm == null)
                 throw new NotFoundException("Farm not found");
+
+            return farm;
+        }
+
+        private bool CheckWhetherUserIsOwner(Farm farm, Guid userId)
+        {
+            if(farm.UserId != userId)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CheckWhetherUserIsCollaborator(Farm farm, Guid userId)
+        {
+            if (farm.Collaborators.FirstOrDefault(c => c.Id == userId) == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
