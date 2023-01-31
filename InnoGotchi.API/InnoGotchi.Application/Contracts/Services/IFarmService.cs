@@ -5,7 +5,7 @@ namespace InnoGotchi.Application.Contracts.Services
 {
     public interface IFarmService
     {
-        Task<Guid> CreateFarmAsync(Guid userId, FarmForCreationDto farmForCreation);
+        Task<FarmOverviewDto> CreateFarmAsync(Guid userId, FarmForCreationDto farmForCreation);
         Task<IEnumerable<FarmOverviewDto>> GetFarmsOverviewAsync();
         Task<IEnumerable<FarmOverviewDto>> GetFriendsFarmsAsync(Guid userId);
         Task<FarmOverviewDto> GetFarmOverviewByIdAsync(Guid userId);

@@ -27,7 +27,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<FarmOverviewDto>> GetFarmsOverviewAsync() =>
             _mapper.Map<IEnumerable<FarmOverviewDto>>(await _repositoryManager.FarmRepository.GetFarmsAsync(false));
 
-        public async Task<Guid> CreateFarmAsync(Guid userId, FarmForCreationDto farmForCreation)
+        public async Task<FarmOverviewDto> CreateFarmAsync(Guid userId, FarmForCreationDto farmForCreation)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
             if(user == null)
@@ -36,12 +36,16 @@ namespace Infrastructure.Services
             if (user.UserFarm != null)
                 throw new AlreadyExistsException("This user already has a farm");
 
-            var farm = _mapper.Map<Farm>(farmForCreation);
+            var farm = await _repositoryManager.FarmRepository.GetFarmByNameAsync(farmForCreation.Name, false);
+            if (farm != null)
+                throw new IncorrectRequestException("This name has alredy registered");
+
+            farm = _mapper.Map<Farm>(farmForCreation);
             farm.UserId = userId;
             await _repositoryManager.FarmRepository.CreateFarm(farm);
             await _repositoryManager.SaveAsync();
 
-            return farm.Id;
+            return _mapper.Map<FarmOverviewDto>(farm);
         }
 
         public async Task<FarmDetailsDto> GetFarmDetailsByIdAsync(Guid userId)
@@ -54,7 +58,6 @@ namespace Infrastructure.Services
             await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm);
 
             var farmForReturn = _mapper.Map<FarmDetailsDto>(farm);
-            farmForReturn.PetsCount = farm.Pets.Count;
 
             return farmForReturn;
         }
@@ -109,7 +112,7 @@ namespace Infrastructure.Services
             if (farm.Collaborators.SingleOrDefault(u => u.Id == friend.Id) != null)
                 throw new AlreadyExistsException("This user is already your friend");
 
-            if (friend.UserFarm.Equals(farm))
+            if (friend.Id == userId)
                 throw new IncorrectRequestException("You cannot be a collaborator on your own farm");
 
             farm.Collaborators.Add(friend);
@@ -121,6 +124,9 @@ namespace Infrastructure.Services
             var farm = await _repositoryManager.FarmRepository.GetFarmByUserIdAsync(userId, true);
             if (farm == null)
                 throw new NotFoundException("Farm not found");
+
+            if (farm.Name == farmForUpdate.Name)
+                throw new IncorrectRequestException("This name has alredy registered");
 
             _mapper.Map(farmForUpdate, farm);
             await _repositoryManager.SaveAsync();
