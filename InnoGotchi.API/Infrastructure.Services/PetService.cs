@@ -37,8 +37,10 @@ namespace Infrastructure.Services
             pet.FarmId = farmId;
             await _repositoryManager.PetRepository.CreatePetAsync(pet);
 
-            var feeding = new HungryStateChanges() { PetId = pet.Id, ChangesDate = DateTime.Now };
-            var drinking = new ThirstyStateChanges() { PetId = pet.Id, ChangesDate = DateTime.Now };
+            var feeding = new HungryStateChanges() 
+                { PetId = pet.Id, ChangesDate = DateTime.Now, HungerState = HungerLevel.Full };
+            var drinking = new ThirstyStateChanges() 
+                { PetId = pet.Id, ChangesDate = DateTime.Now, ThirstyState = ThirstyLevel.Full };
             await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
             await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
 
@@ -63,7 +65,7 @@ namespace Infrastructure.Services
                 throw new PetIsDeadException("Rest and peace");
 
             var feeding = new HungryStateChanges() 
-                { PetId = id, ChangesDate = DateTime.Now, IsFeeding = true };
+                { PetId = id, ChangesDate = DateTime.Now, HungerState = HungerLevel.Full, IsFeeding = true };
             await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
 
             pet.HungerLevel = HungerLevel.Full;
@@ -86,7 +88,7 @@ namespace Infrastructure.Services
                 throw new PetIsDeadException("Rest and peace");
 
             var drinking = new ThirstyStateChanges() 
-                { PetId = id, ChangesDate = DateTime.Now, IsDrinking = true };
+                { PetId = id, ChangesDate = DateTime.Now, ThirstyState = ThirstyLevel.Full, IsDrinking = true };
             await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
 
             pet.ThirstyLevel = ThirstyLevel.Full;
