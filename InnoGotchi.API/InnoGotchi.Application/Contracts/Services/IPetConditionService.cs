@@ -8,5 +8,6 @@ namespace InnoGotchi.Application.Contracts.Services
         Task<Pet> UpdatePetFeedingAndDrinkingLevels(Pet pet);
         bool IsPetAlive(Pet pet);
         int CalculateAge(Pet pet);
+        Task<double> CalculateHappynessDayCount(Guid petId);
     }
 }

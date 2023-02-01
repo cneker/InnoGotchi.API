@@ -43,12 +43,17 @@ namespace Infrastructure.Services
                 hungryDuration -= PetConfiguration.FeedingFrequencyInHours;
                 pet.HungerLevel -= 1;
 
-                var feeding = new HungryStateChanges() { PetId = pet.Id, ChangesDate = DateTime.Now };
+                var feeding = new HungryStateChanges() 
+                { 
+                    PetId = pet.Id, 
+                    ChangesDate = lastHungryUpdate.ChangesDate.AddHours(PetConfiguration.FeedingFrequencyInHours),
+                    HungerState = pet.HungerLevel
+                };
                 await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
 
                 if (pet.HungerLevel == HungerLevel.Dead)
                 {
-                    pet.DeathDay = DateTime.Now;
+                    pet.DeathDay = feeding.ChangesDate;
                     break;
                 }
             }
@@ -57,15 +62,23 @@ namespace Infrastructure.Services
                 thirstyDuration -= PetConfiguration.DrinkingFrequencyInHours;
                 pet.ThirstyLevel -= 1;
 
-                var drinking = new ThirstyStateChanges() { PetId = pet.Id, ChangesDate = DateTime.Now };
+                var drinking = new ThirstyStateChanges() 
+                { 
+                    PetId = pet.Id, 
+                    ChangesDate = lastThirstyUpdate.ChangesDate.AddHours(PetConfiguration.DrinkingFrequencyInHours),
+                    ThirstyState = pet.ThirstyLevel
+                };
                 await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
 
                 if (pet.ThirstyLevel == ThirstyLevel.Dead)
                 {
-                    pet.DeathDay = DateTime.Now;
+                    pet.DeathDay = drinking.ChangesDate;
                     break;
                 }
             }
+
+            pet.HappynessDayCount = await CalculateHappynessDayCount(pet.Id);
+
             await _repositoryManager.SaveAsync();
 
             return pet;
@@ -75,5 +88,122 @@ namespace Infrastructure.Services
             pet.DeathDay != null ?
                 (pet.DeathDay - pet.Birthday).Value.Days / PetConfiguration.OnePetAgeInDays :
                 (DateTime.Now - pet.Birthday).Days / PetConfiguration.OnePetAgeInDays;
+
+        public async Task<double> CalculateHappynessDayCount(Guid petId)
+        {
+            var hungryRecords = 
+                (await _repositoryManager.FeedingHistoryRepository.GetHistoryByPetIdAsync(petId, false)).ToList();
+            var thirstyRecords = 
+                (await _repositoryManager.DrinkingHistoryRepository.GetHistoryByPetIdAsync(petId, false)).ToList();
+            hungryRecords.Add(new HungryStateChanges { PetId = petId, ChangesDate = DateTime.Now });
+            thirstyRecords.Add(new ThirstyStateChanges { PetId = petId, ChangesDate = DateTime.Now });
+
+            var startH = DateTime.Now; var endH = DateTime.Now;
+            var startT = DateTime.Now; var endT = DateTime.Now;
+
+            int i = 0, j = 0;
+
+            var count = 0.0;
+
+            bool emptyH = true; bool emptyT = true;
+            bool nextT = true, nextH = true;
+
+            while(true)
+            {
+                if (nextH)
+                {
+                    for (; i < hungryRecords.Count(); i++)
+                    {
+                        if (hungryRecords[i].HungerState >= HungerLevel.Normal)
+                        {
+                            startH = hungryRecords[i].ChangesDate;
+                            i++;
+                            emptyH = false;
+                            break;
+                        }
+                    }
+
+                    for (; i < hungryRecords.Count(); i++)
+                    {
+                        if (hungryRecords[i].HungerState < HungerLevel.Normal)
+                        {
+                            endH = hungryRecords[i].ChangesDate;
+                            i++;
+                            break;
+                        }
+                    }
+                }
+
+                if (nextT)
+                {
+                    for (; j < thirstyRecords.Count(); j++)
+                    {
+                        if (thirstyRecords[j].ThirstyState >= ThirstyLevel.Normal)
+                        {
+                            startT = thirstyRecords[j].ChangesDate;
+                            j++;
+                            emptyT = false;
+                            break;
+                        }
+                    }
+
+                    for (; j < thirstyRecords.Count(); j++)
+                    {
+                        if (thirstyRecords[j].ThirstyState < ThirstyLevel.Normal)
+                        {
+                            endT = thirstyRecords[j].ChangesDate;
+                            j++;
+                            break;
+                        }
+                    }
+                }
+
+                if (emptyH == true || emptyT == true)
+                    break;
+
+
+                if(startH < endT && startT < endH)
+                {
+                    var temp_start = startH > startT ? startH : startT;
+                    var temp_end = endH > endT ? endT : endH;
+
+                    count += (temp_end - temp_start).TotalHours;
+
+                    if(temp_end == endT && temp_end == endH)
+                    {
+                        break;
+                    }
+
+                    if (temp_end == endT)
+                    {
+                        startH = temp_end;
+                        nextH = false;
+                        nextT = true;
+                        emptyT = true;
+                    }
+                    else
+                    {
+                        startT = temp_end;
+                        nextT = false;
+                        nextH = true;
+                        emptyH = true;
+                    }
+                }
+                else
+                {
+                    if(startH > endT)
+                    {
+                        nextH = false;
+                        nextT = true;
+                    }
+                    else
+                    {
+                        nextT = false;
+                        nextH = true;
+                    }
+                }
+            }
+            return count;
+        }
     }
 }
