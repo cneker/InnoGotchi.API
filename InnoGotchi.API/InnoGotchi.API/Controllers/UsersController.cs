@@ -1,6 +1,7 @@
 ﻿using InnoGotchi.API.Filters.ActionFilters;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
@@ -23,7 +24,7 @@ namespace InnoGotchi.API.Controllers
             return Ok(usersDto);
         }
 
-        [HttpGet("{id}", Name = "GetUser")]
+        [HttpGet("{id}", Name = "GetUser"), Authorize]
         public async Task<IActionResult> GetUser(Guid id)
         {
             var userDto = await _userService.GetUserInfoByIdAsync(id);
@@ -37,11 +38,11 @@ namespace InnoGotchi.API.Controllers
         {
             var user = await _userService.CreateUserAsync(userDto);
 
-            return CreatedAtRoute("GetUser", new { id = user.Id }, user);
+            return CreatedAtRoute("SignIn", new { Controller = "Authentication" }, user.Email);
         }
 
         [HttpPut("{id}")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
         public async Task<IActionResult> UpdateUserInfo(Guid id, [FromBody] UserInfoForUpdateDto userDto)
         {
             await _userService.UpdateUserInfoAsync(id, userDto);
@@ -50,7 +51,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPut("{id}/change-password")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
         public async Task<IActionResult> ChangeUserPassword(Guid id, [FromBody] PasswordChangingDto passwordDto)
         {
             await _userService.UpdatePasswordAsync(id, passwordDto);

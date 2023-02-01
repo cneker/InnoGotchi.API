@@ -21,6 +21,8 @@ builder.Services.ConfigureAutoMapper();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<UserForRegistrationDtoValidator>();
 builder.Services.ConfigurActionFilters();
+builder.Services.ConfigureJWT(builder.Configuration);
+builder.Services.ConfigureAuthorization();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
@@ -39,7 +41,8 @@ app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseRouting();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

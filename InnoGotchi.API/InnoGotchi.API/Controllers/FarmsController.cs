@@ -2,6 +2,7 @@
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.Farm;
 using InnoGotchi.Application.DataTransferObjects.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
@@ -24,7 +25,7 @@ namespace InnoGotchi.API.Controllers
             return Ok(farmsDto);
         }
 
-        [HttpGet(Name = "GetFarmOverview")]
+        [HttpGet(Name = "GetFarmOverview"), Authorize]
         public async Task<IActionResult> GetFarmOverview(Guid userId)
         {
             var farmDto = await _farmService.GetFarmOverviewByIdAsync(userId);
@@ -33,7 +34,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPost]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
         public async Task<IActionResult> CreateFarm(Guid userId, [FromBody] FarmForCreationDto farmDto)
         {
             var farm = await _farmService.CreateFarmAsync(userId, farmDto);
@@ -41,7 +42,7 @@ namespace InnoGotchi.API.Controllers
             return CreatedAtRoute("GetFarmOverview", new { userId = userId }, farm);
         }
 
-        [HttpGet("detail")]
+        [HttpGet("detail"), Authorize]
         public async Task<IActionResult> GetFarmDetails(Guid userId)
         {
             var farmDto = await _farmService.GetFarmDetailsByIdAsync(userId);
@@ -49,7 +50,7 @@ namespace InnoGotchi.API.Controllers
             return Ok(farmDto);
         }
 
-        [HttpGet("statistics")]
+        [HttpGet("statistics"), Authorize]
         public async Task<IActionResult> GetFarmStatistics(Guid userId)
         {
             var farmDto = await _farmService.GetFarmStatisticsByIdAsync(userId);
@@ -65,7 +66,7 @@ namespace InnoGotchi.API.Controllers
             return Ok(friends);
         }
 
-        [HttpPost("collaborators")]
+        [HttpPost("collaborators"), Authorize]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> InviteCollaborator(Guid userId, [FromBody] UserForInvitingDto userDto)
         {
@@ -74,7 +75,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPut]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
         public async Task<IActionResult> UpdateFarm(Guid userId, [FromBody] FarmForUpdateDto farmDto)
         {
             await _farmService.UpdateFarmNameAsync(userId, farmDto);

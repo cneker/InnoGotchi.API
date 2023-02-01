@@ -1,6 +1,7 @@
 ﻿using InnoGotchi.API.Filters.ActionFilters;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.Pet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
@@ -23,7 +24,7 @@ namespace InnoGotchi.API.Controllers
             return Ok(pets);
         }
 
-        [HttpGet("{id}", Name = "GetPet")]
+        [HttpGet("{id}", Name = "GetPet"), Authorize]
         public async Task<IActionResult> GetPet(Guid userId, Guid farmId, Guid id)
         {
             var pet = await _petService.GetPetByIdAsync(userId, farmId, id);
@@ -32,7 +33,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPost]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
         public async Task<IActionResult> CreatePet(Guid userId, Guid farmId, [FromBody] PetForCreationDto petDto)
         {
             var pet = await _petService.CreatePetAsync(userId, farmId, petDto);
@@ -41,7 +42,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
         public async Task<IActionResult> UpdatePetName(Guid userId, Guid farmId, Guid id, [FromBody] PetForUpdateDto petDto)
         {
             await _petService.UpdatePetNameAsync(userId, farmId, id, petDto);
@@ -49,7 +50,7 @@ namespace InnoGotchi.API.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}/feed")]
+        [HttpPut("{id}/feed"), Authorize]
         public async Task<IActionResult> FeedThePet(Guid userId, Guid farmId, Guid id)
         {
             await _petService.FeedThePetAsync(userId, farmId, id);
@@ -57,7 +58,7 @@ namespace InnoGotchi.API.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}/give-a-drink")]
+        [HttpPut("{id}/give-a-drink"), Authorize]
         public async Task<IActionResult> GiveADrinkToThePet(Guid userId, Guid farmId, Guid id)
         {
             await _petService.GiveADrinkToPetAsync (userId, farmId, id);
