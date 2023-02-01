@@ -1,8 +1,8 @@
 ﻿namespace InnoGotchi.Application.Exceptions
 {
-    public class AccessDeniedExcepton : Exception
+    public class AccessDeniedException : Exception
     {
-        public AccessDeniedExcepton(string message) : base(message)
+        public AccessDeniedException(string message) : base(message)
         {
         }
     }
