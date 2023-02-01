@@ -1,4 +1,5 @@
 ﻿using InnoGotchi.Domain.Entities;
+using InnoGotchi.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,6 +20,8 @@ namespace Infrastructure.Persistance.Configurations
 
             builder.Property(u => u.AvatarPath)
                 .HasDefaultValue("default.jpg");
+            builder.Property(u => u.Role)
+                .HasDefaultValue(Roles.User);
         }
     }
 }

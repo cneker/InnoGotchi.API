@@ -23,9 +23,9 @@ namespace Infrastructure.Persistance.Configurations
             builder.Property(p => p.HappynessDayCount)
                 .HasDefaultValue(0);
             builder.Property(p => p.HungerLevel)
-                .HasDefaultValue(HungerLevel.Full);
+                .HasDefaultValue(HungerLevel.Normal);
             builder.Property(p => p.ThirstyLevel)
-                .HasDefaultValue(ThirstyLevel.Full);
+                .HasDefaultValue(ThirstyLevel.Normal);
         }
     }
 }
