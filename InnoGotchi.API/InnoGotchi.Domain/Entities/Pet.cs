@@ -8,7 +8,7 @@ namespace InnoGotchi.Domain.Entities
         public string Name { get; set; }
         public DateTime Birthday { get; set; }
         public DateTime? DeathDay { get; set; }
-        public int HappynessDayCount { get; set; }
+        public double HappynessDayCount { get; set; }
         public HungerLevel HungerLevel { get; set; }
         public ThirstyLevel ThirstyLevel { get; set; }
         public Body Body { get; set; }

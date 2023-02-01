@@ -9,6 +9,7 @@ namespace InnoGotchi.Application.DataTransferObjects.Pet
         public HungerLevel HungerLevel { get; set; }
         public ThirstyLevel ThirstyLevel { get; set; }
         public int Age { get; set; }
+        public double HappynessDayCount { get; set; }
         public bool IsAlive { get; set; }
     }
 }
