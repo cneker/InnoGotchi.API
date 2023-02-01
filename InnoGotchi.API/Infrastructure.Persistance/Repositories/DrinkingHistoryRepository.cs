@@ -17,6 +17,11 @@ namespace Infrastructure.Persistance.Repositories
             .Where(r => r.Pet.FarmId == farmId)
             .ToListAsync();
 
+        public async Task<IEnumerable<ThirstyStateChanges>> GetHistoryByPetIdAsync(Guid petId, bool trackChanges) =>
+            await GetAll(trackChanges)
+            .Where(r => r.PetId == petId)
+            .ToListAsync();
+
         public async Task<ThirstyStateChanges> GetLastDrankByPetIdAsync(Guid petId, bool trackChanges) =>
             await GetByCondition(r => r.PetId == petId, trackChanges).LastOrDefaultAsync();
 
