@@ -1,10 +1,11 @@
-﻿using InnoGotchi.Domain.Entities;
+﻿using InnoGotchi.Application.RequestFeatures;
+using InnoGotchi.Domain.Entities;
 
 namespace InnoGotchi.Application.Contracts.Repositories
 {
     public interface IPetRepository
     {
-        Task<IEnumerable<Pet>> GetAllPetsAsync(bool trackChanges);
+        Task<PagedList<Pet>> GetAllPetsAsync(PetParameters petParameters, bool trackChanges);
         Task<IEnumerable<Pet>> GetPetsByFarmIdAsync(Guid farmId, bool trackChanges);
         Task<Pet> GetPetByIdAsync(Guid id, bool trackChanges);
         Task<Pet> GetPetByNameAsync(string name, bool trackChanges);

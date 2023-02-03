@@ -3,6 +3,7 @@ using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.Pet;
 using InnoGotchi.Application.Exceptions;
+using InnoGotchi.Application.RequestFeatures;
 using InnoGotchi.Domain.Entities;
 using InnoGotchi.Domain.Enums;
 
@@ -95,9 +96,9 @@ namespace Infrastructure.Services
             await _repositoryManager.SaveAsync();
         }
 
-        public async Task<IEnumerable<PetOverviewDto>> GetAllPetsAsync()
+        public async Task<IEnumerable<PetOverviewDto>> GetAllPetsAsync(PetParameters petParameters)
         {
-            var pets = await _repositoryManager.PetRepository.GetAllPetsAsync(true);
+            var pets = await _repositoryManager.PetRepository.GetAllPetsAsync(petParameters, true);
             //UPDATE VITAL SIGNS AND SAVE
             foreach (var pet in pets)
                 await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);

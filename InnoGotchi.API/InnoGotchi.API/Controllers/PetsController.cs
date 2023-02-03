@@ -1,6 +1,7 @@
 ﻿using InnoGotchi.API.Filters.ActionFilters;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.Pet;
+using InnoGotchi.Application.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,9 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet("/api/pets")]
-        public async Task<IActionResult> GetPets()
+        public async Task<IActionResult> GetPets([FromQuery] PetParameters petParameters)
         {
-            var pets = await _petService.GetAllPetsAsync();
+            var pets = await _petService.GetAllPetsAsync(petParameters);
 
             return Ok(pets);
         }
