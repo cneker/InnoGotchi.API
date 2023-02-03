@@ -16,14 +16,16 @@ namespace InnoGotchi.Application.Mapper
                 .ForMember(u => u.AvatarPath, opt => opt.Ignore())
                 .ForMember(u => u.PasswordHash, opt => opt.Ignore())
                 .ForMember(u => u.UserFarm, opt => opt.Ignore())
-                .ForMember(u => u.FriendsFarms, opt => opt.Ignore());
+                .ForMember(u => u.FriendsFarms, opt => opt.Ignore())
+                .ForMember(u => u.Role, opt => opt.Ignore());
             CreateMap<User, UserInfoDto>();
             CreateMap<UserInfoForUpdateDto, User>()
                 .ForMember(u => u.Id, opt => opt.Ignore()) 
                 .ForMember(u => u.Email, opt => opt.Ignore())
                 .ForMember(u => u.PasswordHash, opt => opt.Ignore())
                 .ForMember(u => u.UserFarm, opt => opt.Ignore())
-                .ForMember(u => u.FriendsFarms, opt => opt.Ignore());
+                .ForMember(u => u.FriendsFarms, opt => opt.Ignore())
+                .ForMember(u => u.Role, opt => opt.Ignore());
 
             CreateMap<Farm, FarmOverviewDto>()
                 .ForMember(f => f.PetsCount, opt => opt.MapFrom(f => f.Pets.Count));

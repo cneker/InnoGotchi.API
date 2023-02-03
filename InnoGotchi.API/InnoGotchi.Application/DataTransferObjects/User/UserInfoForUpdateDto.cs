@@ -2,7 +2,6 @@
 {
     public class UserInfoForUpdateDto
     {
-        public string AvatarPath { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
     }

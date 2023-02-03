@@ -13,8 +13,6 @@ namespace InnoGotchi.Application.Validators.User
             RuleFor(u => u.LastName)
                 .NotEmpty()
                 .Length(1, 30);
-            RuleFor(u => u.AvatarPath)
-                .NotEmpty();
         }
     }
 }
