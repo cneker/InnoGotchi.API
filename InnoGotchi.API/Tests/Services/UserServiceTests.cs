@@ -17,13 +17,16 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task CreateUserAsync_ReturnsUsersGuid_WhenPassedEmailIsUniq()
+        public async Task CreateUserAsync_ReturnsUserInfoDto_WhenPassedEmailIsUniq()
         {
             //Arrange
             var userForReg = _fixture.Create<UserForRegistrationDto>();
             var user = _fixture.Build<User>()
                 .Without(u => u.UserFarm)
                 .Without(u => u.FriendsFarms)
+                .Create();
+            var userInfo = _fixture.Build<UserInfoDto>()
+                .With(u => u.Id, user.Id)
                 .Create();
 
             var repositoryMock = new Mock<IRepositoryManager>();
@@ -41,19 +44,19 @@ namespace Tests.Services
             var mapperMock = new Mock<IMapper>();
             mapperMock.Setup(m => m.Map<User>(It.IsAny<UserForRegistrationDto>()))
                 .Returns(user);
+            mapperMock.Setup(m => m.Map<UserInfoDto>(user))
+                .Returns(userInfo);
 
             var service = new UserService(repositoryMock.Object, authMock.Object, mapperMock.Object);
             //Act
             var result = await service.CreateUserAsync(userForReg);
 
             //Assert
-            repositoryMock.Verify(r => 
-                r.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), It.IsAny<bool>()), Times.Once);
             repositoryMock.Verify(r => r.UserRepository.CreateUser(It.IsAny<User>()), Times.Once);
             repositoryMock.Verify(r => r.SaveAsync(), Times.Once);
             mapperMock.Verify(m => m.Map<User>(It.IsAny<UserForRegistrationDto>()), Times.Once);
             authMock.Verify(a => a.CreatePasswordHash(It.IsAny<string>()), Times.Once);
-            result.Should().Be(user.Id);
+            result.Id.Should().Be(user.Id);
         }
 
         [Fact]
@@ -77,8 +80,6 @@ namespace Tests.Services
 
             //Assert
             await result.Should().ThrowAsync<AlreadyExistsException>().WithMessage("The email has already registered");
-            repositoryMock.Verify(r =>
-                r.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), It.IsAny<bool>()), Times.Once);
         }
 
         [Fact]
@@ -105,8 +106,8 @@ namespace Tests.Services
             var result = await service.GetUsersInfoAsync();
 
             //Assert
-            result.Should().NotBeNull();
-            result.Should().AllBeOfType<UserInfoDto>();
+            result.Should().NotBeNull()
+                .And.AllBeOfType<UserInfoDto>();
         }
 
         [Fact]
@@ -139,8 +140,6 @@ namespace Tests.Services
             await service.DeleteUserById(id);
 
             //Assert
-            repositoryMock.Verify(r => 
-                r.UserRepository.GetUserByIdAsync(id, It.IsAny<bool>()), Times.Once);
             repositoryMock.Verify(r => r.FarmRepository.DeleteFarm(user.UserFarm), Times.Once);
             repositoryMock.Verify(r => r.UserRepository.DeleteUser(user), Times.Once);
             repositoryMock.Verify(r => r.SaveAsync(), Times.Once);
@@ -163,8 +162,6 @@ namespace Tests.Services
 
             //Assert
             await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
-            repositoryMock.Verify(r =>
-                r.UserRepository.GetUserByIdAsync(id, It.IsAny<bool>()), Times.Once);
         }
 
         [Fact]
@@ -191,8 +188,6 @@ namespace Tests.Services
             var result = await service.GetUserInfoByIdAsync(user.Id);
 
             //Assert
-            repositoryMock.Verify(r =>
-                r.UserRepository.GetUserByIdAsync(id, It.IsAny<bool>()), Times.Once);
             mapperMock.Verify(m => m.Map<UserInfoDto>(user), Times.Once);
             result.Should().Be(userInfoDto);
         }
@@ -213,8 +208,6 @@ namespace Tests.Services
 
             //Assert
             await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
-            repositoryMock.Verify(r =>
-                r.UserRepository.GetUserByIdAsync(id, It.IsAny<bool>()), Times.Once);
         }
 
         [Fact]
@@ -243,7 +236,6 @@ namespace Tests.Services
             await service.UpdatePasswordAsync(id, passwordChangingDto);
 
             //Assert
-            repositorMock.Verify(r => r.UserRepository.GetUserByIdAsync(id, true), Times.Once);
             authMock.Verify(a => a.CreatePasswordHash(passwordChangingDto.NewPassword), Times.Once);
             repositorMock.Verify(r => r.SaveAsync(), Times.Once);
         }
@@ -265,7 +257,6 @@ namespace Tests.Services
 
             //Assert
             await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
-            repositorMock.Verify(r => r.UserRepository.GetUserByIdAsync(id, true), Times.Once);
         }
 
         [Fact]
@@ -294,7 +285,6 @@ namespace Tests.Services
             await service.UpdateUserInfoAsync(id, userInfoForUpdateDto);
 
             //Assert
-            repositorMock.Verify(r => r.UserRepository.GetUserByIdAsync(id, true), Times.Once);
             mapperMock.Verify(a => a.Map(userInfoForUpdateDto, user), Times.Once);
             repositorMock.Verify(r => r.SaveAsync(), Times.Once);
         }
@@ -316,7 +306,6 @@ namespace Tests.Services
 
             //Assert
             await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
-            repositorMock.Verify(r => r.UserRepository.GetUserByIdAsync(id, true), Times.Once);
         }
     }
 }

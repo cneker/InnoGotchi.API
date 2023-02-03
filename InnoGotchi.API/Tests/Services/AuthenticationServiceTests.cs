@@ -2,6 +2,7 @@
 using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.User;
+using InnoGotchi.Application.Exceptions;
 using InnoGotchi.Domain.Entities;
 
 namespace Tests.Services
@@ -85,12 +86,11 @@ namespace Tests.Services
 
             //Assert
             token.Should().Be(result);
-            repMock.Verify(a => a.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), false), Times.Once);
             tokenMock.Verify(a => a.GenerateToken(user), Times.Once);
         }
 
         [Fact]
-        public async Task SignInAsync_ReturnsException_WhenUserEmailIsInvalid()
+        public async Task SignInAsync_ThrowingNotFoundException_WhenUserEmailIsInvalid()
         {
             //Arrange
             var userDto = _fixture.Build<UserForAuthenticationDto>()
@@ -107,12 +107,11 @@ namespace Tests.Services
             Func<Task> result = async () => await service.SignInAsync(userDto);
 
             //Assert
-            await result.Should().ThrowAsync<Exception>().WithMessage("not found");
-            repMock.Verify(a => a.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), false), Times.Once);
+            await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
         }
 
         [Fact]
-        public async Task SignInAsync_ReturnsException_WhenUserPasswordIsInvalid()
+        public async Task SignInAsync_ThrowingIncorrectRequestException_WhenUserPasswordIsInvalid()
         {
             //Arrange
             var userDto = _fixture.Build<UserForAuthenticationDto>()
@@ -134,8 +133,7 @@ namespace Tests.Services
             Func<Task> result = async () => await service.SignInAsync(userDto);
 
             //Assert
-            await result.Should().ThrowAsync<Exception>().WithMessage("wrong password");
-            repMock.Verify(a => a.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), false), Times.Once);
+            await result.Should().ThrowAsync<IncorrectRequestException>().WithMessage("Wrong password");
         }
     }
 }

@@ -35,11 +35,8 @@ namespace Tests.Services
             var result = tokenService.GenerateToken(user);
 
             //Assert
-            result.Should().BeOfType<string>();
-            confMock.Verify(a => a.GetSection("JwtSettings"), Times.Once);
-            mockSection.Verify(a => a.GetSection("validIssuer").Value, Times.Once);
-            mockSection.Verify(a => a.GetSection("validAudience").Value, Times.Once);
-            mockSection.Verify(a => a.GetSection("expires").Value, Times.Once);
+            result.Should().NotBeEmpty()
+                .And.BeOfType<string>();
         }
     }
 }

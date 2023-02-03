@@ -25,8 +25,8 @@ namespace Tests.Repositories
             var result = await _repository.GetUsersAsync(false);
 
             //Assert
-            result.Should().NotBeNull();
-            result.Should().HaveCount(3);
+            result.Should().NotBeNull()
+                .And.HaveCount(3);
         }
 
         [Fact]
@@ -39,8 +39,8 @@ namespace Tests.Repositories
             var result = await _repository.GetUserByIdAsync(userId, false);
 
             //Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<User>();
+            result.Should().NotBeNull()
+                .And.BeOfType<User>();
             result.Id.Should().Be(userId);
             result.UserFarm.Should().NotBeNull();
             result.FriendsFarms.Should().NotBeNull();
@@ -69,8 +69,8 @@ namespace Tests.Repositories
             var result = await _repository.GetUserByEmailAsync(userEmail, false);
 
             //Assert
-            result.Should().NotBeNull();
-            result.Should().BeOfType<User>();
+            result.Should().NotBeNull()
+                .And.BeOfType<User>();
             result.Email.Should().Be(userEmail);
             result.UserFarm.Should().NotBeNull();
             result.FriendsFarms.Should().NotBeNull();
@@ -106,8 +106,8 @@ namespace Tests.Repositories
             //Assert
             var result = await _repository.GetUserByIdAsync(user.Id, false);
             _context.Database.RollbackTransaction();
-            result.Should().NotBeNull();
-            result.Id.Should().Be(user.Id);
+            result.Should().NotBeNull()
+                .And.Match<User>(u => u.Id == user.Id);
         }
 
         [Fact]

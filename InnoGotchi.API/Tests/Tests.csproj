@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure.Persistance\Infrastructure.Persistance.csproj" />
     <ProjectReference Include="..\Infrastructure.Services\Infrastructure.Services.csproj" />
+    <ProjectReference Include="..\InnoGotchi.API\InnoGotchi.API.csproj" />
     <ProjectReference Include="..\InnoGotchi.Application\InnoGotchi.Application.csproj" />
   </ItemGroup>
 
