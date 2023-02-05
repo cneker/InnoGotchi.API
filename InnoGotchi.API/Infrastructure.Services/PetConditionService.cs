@@ -37,16 +37,20 @@ namespace Infrastructure.Services
                 .OrderBy(d => d.ChangesDate).Last();
             var hungryDuration = (DateTime.Now - lastHungryUpdate.ChangesDate).TotalHours;
             var thirstyDuration = (DateTime.Now - lastThirstyUpdate.ChangesDate).TotalHours;
-            
-            while(hungryDuration >= PetConfiguration.FeedingFrequencyInHours)
+            var feeding = new HungryStateChanges();
+            feeding.ChangesDate = lastHungryUpdate.ChangesDate;
+            var drinking = new ThirstyStateChanges();
+            drinking.ChangesDate = lastThirstyUpdate.ChangesDate;
+
+            while (hungryDuration >= PetConfiguration.FeedingFrequencyInHours)
             {
                 hungryDuration -= PetConfiguration.FeedingFrequencyInHours;
                 pet.HungerLevel -= 1;
 
-                var feeding = new HungryStateChanges() 
+                feeding = new HungryStateChanges() 
                 { 
                     PetId = pet.Id, 
-                    ChangesDate = lastHungryUpdate.ChangesDate.AddHours(PetConfiguration.FeedingFrequencyInHours),
+                    ChangesDate = feeding.ChangesDate.AddHours(PetConfiguration.FeedingFrequencyInHours),
                     HungerState = pet.HungerLevel
                 };
                 await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
@@ -62,20 +66,23 @@ namespace Infrastructure.Services
                 thirstyDuration -= PetConfiguration.DrinkingFrequencyInHours;
                 pet.ThirstyLevel -= 1;
 
-                var drinking = new ThirstyStateChanges() 
+                drinking = new ThirstyStateChanges() 
                 { 
                     PetId = pet.Id, 
-                    ChangesDate = lastThirstyUpdate.ChangesDate.AddHours(PetConfiguration.DrinkingFrequencyInHours),
+                    ChangesDate = drinking.ChangesDate.AddHours(PetConfiguration.DrinkingFrequencyInHours),
                     ThirstyState = pet.ThirstyLevel
                 };
                 await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
 
                 if (pet.ThirstyLevel == ThirstyLevel.Dead)
                 {
-                    pet.DeathDay = drinking.ChangesDate;
+                    if (pet.DeathDay > drinking.ChangesDate || pet.DeathDay == null)
+                        pet.DeathDay = drinking.ChangesDate;
                     break;
                 }
             }
+
+            await _repositoryManager.SaveAsync();
 
             pet.HappynessDayCount = await CalculateHappynessDayCount(pet.Id);
 
