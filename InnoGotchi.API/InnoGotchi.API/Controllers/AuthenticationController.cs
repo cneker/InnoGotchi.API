@@ -1,5 +1,6 @@
 ﻿using InnoGotchi.API.Filters.ActionFilters;
 using InnoGotchi.Application.Contracts.Services;
+using InnoGotchi.Application.DataTransferObjects;
 using InnoGotchi.Application.DataTransferObjects.User;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +23,7 @@ namespace InnoGotchi.API.Controllers
         {
             var jwt = await _authService.SignInAsync(userDto);
 
-            return Ok(new { Token = jwt });
+            return Ok(new AccessTokenDto { AccessToken = jwt});
         }
     }
 }
