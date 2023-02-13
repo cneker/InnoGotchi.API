@@ -23,6 +23,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<UserForRegistrationDtoValid
 builder.Services.ConfigurActionFilters();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureAuthorization();
+builder.Services.AddCors();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwagger();
@@ -35,7 +36,7 @@ if (app.Environment.IsDevelopment())
 {
 
 }
-
+app.UseHsts();
 app.UseSwagger();
 app.UseSwaggerUI(s =>
 {
@@ -45,9 +46,16 @@ app.UseSwaggerUI(s =>
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
-app.UseCors();
+app.UseStaticFiles();
+
 
 app.UseRouting();
+app.UseCors(conf =>
+{
+    conf.AllowAnyOrigin();
+    conf.AllowAnyHeader();
+    conf.AllowAnyMethod();
+});
 app.UseAuthentication();
 app.UseAuthorization();
 
