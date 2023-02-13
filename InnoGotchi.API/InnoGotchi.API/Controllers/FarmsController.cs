@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
-    [Route("api/users/{userId}/farms")]
+    [Route("api/farms")]
     [ApiController]
     public class FarmsController : ControllerBase
     {
@@ -17,7 +17,7 @@ namespace InnoGotchi.API.Controllers
             _farmService = farmService;
         }
 
-        [HttpGet("/api/farms")]
+        [HttpGet]
         public async Task<IActionResult> GetFarms()
         {
             var farmsDto = await _farmService.GetFarmsOverviewAsync();
@@ -25,60 +25,67 @@ namespace InnoGotchi.API.Controllers
             return Ok(farmsDto);
         }
 
-        [HttpGet(Name = "GetFarmOverview"), Authorize]
-        public async Task<IActionResult> GetFarmOverview(Guid userId)
+        [HttpGet("my-farm", Name = "GetFarmOverview")]
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute)), Authorize]
+        public async Task<IActionResult> GetFarmOverview(Guid id)
         {
-            var farmDto = await _farmService.GetFarmOverviewByIdAsync(userId);
+            var farmDto = await _farmService.GetFarmOverviewByIdAsync(id);
 
             return Ok(farmDto);
         }
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
-        public async Task<IActionResult> CreateFarm(Guid userId, [FromBody] FarmForCreationDto farmDto)
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute))]
+        public async Task<IActionResult> CreateFarm(Guid id, [FromBody] FarmForCreationDto farmDto)
         {
-            var farm = await _farmService.CreateFarmAsync(userId, farmDto);
+            var farm = await _farmService.CreateFarmAsync(id, farmDto);
 
-            return CreatedAtRoute("GetFarmOverview", new { userId = userId }, farm);
+            return CreatedAtRoute("GetFarmOverview", new { id = id }, farm);
         }
 
-        [HttpGet("detail"), Authorize]
-        public async Task<IActionResult> GetFarmDetails(Guid userId)
+        [HttpGet("my-farm/detail")]
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute)), Authorize]
+        public async Task<IActionResult> GetFarmDetails(Guid id)
         {
-            var farmDto = await _farmService.GetFarmDetailsByIdAsync(userId);
+            var farmDto = await _farmService.GetFarmDetailsByIdAsync(id);
 
             return Ok(farmDto);
         }
 
-        [HttpGet("statistics"), Authorize]
-        public async Task<IActionResult> GetFarmStatistics(Guid userId)
+        [HttpGet("statistics")]
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute)), Authorize]
+        public async Task<IActionResult> GetFarmStatistics(Guid id)
         {
-            var farmDto = await _farmService.GetFarmStatisticsByIdAsync(userId);
+            var farmDto = await _farmService.GetFarmStatisticsByIdAsync(id);
 
             return Ok(farmDto);
         }
 
         [HttpGet("friends")]
-        public async Task<IActionResult> GetFriendsFarms(Guid userId)
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute))]
+        public async Task<IActionResult> GetFriendsFarms(Guid id)
         {
-            var friends = await _farmService.GetFriendsFarmsAsync(userId);
+            var friends = await _farmService.GetFriendsFarmsAsync(id);
 
             return Ok(friends);
         }
 
-        [HttpPost("collaborators"), Authorize]
+        [HttpPost("collaborators")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> InviteCollaborator(Guid userId, [FromBody] UserForInvitingDto userDto)
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute)), Authorize]
+        public async Task<IActionResult> InviteCollaborator(Guid id, [FromBody] UserForInvitingDto userDto)
         {
-            await _farmService.InviteFriendAsync(userId, userDto);
+            await _farmService.InviteFriendAsync(id, userDto);
             return NoContent();
         }
 
         [HttpPut]
-        [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
-        public async Task<IActionResult> UpdateFarm(Guid userId, [FromBody] FarmForUpdateDto farmDto)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute)), Authorize]
+        public async Task<IActionResult> UpdateFarm(Guid id, [FromBody] FarmForUpdateDto farmDto)
         {
-            await _farmService.UpdateFarmNameAsync(userId, farmDto);
+            await _farmService.UpdateFarmNameAsync(id, farmDto);
 
             return NoContent();
         }

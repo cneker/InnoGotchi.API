@@ -56,6 +56,7 @@ namespace InnoGotchi.API.Extensions
         public static void ConfigurActionFilters(this IServiceCollection services)
         {
             services.AddScoped<ValidationFilterAttribute>();
+            services.AddScoped<ExtractUserIdFilterAttribute>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)

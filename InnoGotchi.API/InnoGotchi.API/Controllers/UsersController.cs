@@ -24,7 +24,8 @@ namespace InnoGotchi.API.Controllers
             return Ok(usersDto);
         }
 
-        [HttpGet("{id}", Name = "GetUser"), Authorize]
+        [HttpGet("profile", Name = "GetUser"), Authorize]
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute))]
         public async Task<IActionResult> GetUser(Guid id)
         {
             var userDto = await _userService.GetUserInfoByIdAsync(id);
@@ -41,8 +42,9 @@ namespace InnoGotchi.API.Controllers
             return CreatedAtRoute("SignIn", new { Controller = "Authentication" }, user.Email);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("profile")]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute))]
         public async Task<IActionResult> UpdateUserInfo(Guid id, [FromBody] UserInfoForUpdateDto userDto)
         {
             await _userService.UpdateUserInfoAsync(id, userDto);
@@ -50,8 +52,9 @@ namespace InnoGotchi.API.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}/change-password")]
+        [HttpPut("profile/change-password")]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
+        [ServiceFilter(typeof(ExtractUserIdFilterAttribute))]
         public async Task<IActionResult> ChangeUserPassword(Guid id, [FromBody] PasswordChangingDto passwordDto)
         {
             await _userService.UpdatePasswordAsync(id, passwordDto);
