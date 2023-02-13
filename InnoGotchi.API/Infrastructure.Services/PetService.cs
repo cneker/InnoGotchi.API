@@ -39,9 +39,9 @@ namespace Infrastructure.Services
             await _repositoryManager.PetRepository.CreatePetAsync(pet);
 
             var feeding = new HungryStateChanges() 
-                { PetId = pet.Id, ChangesDate = DateTime.Now, HungerState = HungerLevel.Full };
+                { PetId = pet.Id, ChangesDate = DateTime.Now, HungerState = HungerLevel.Normal };
             var drinking = new ThirstyStateChanges() 
-                { PetId = pet.Id, ChangesDate = DateTime.Now, ThirstyState = ThirstyLevel.Full };
+                { PetId = pet.Id, ChangesDate = DateTime.Now, ThirstyState = ThirstyLevel.Normal };
             await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
             await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
 
