@@ -48,11 +48,19 @@ namespace Infrastructure.Services
             return _mapper.Map<FarmOverviewDto>(farm);
         }
 
-        public async Task<FarmDetailsDto> GetFarmDetailsByIdAsync(Guid userId)
+        public async Task<FarmDetailsDto> GetFarmDetailsByFarmIdAsync(Guid userId, Guid farmId)
         {
-            var farm = await _repositoryManager.FarmRepository.GetFarmByUserIdAsync(userId, true);
+            var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
+            if(user == null)
+                throw new NotFoundException("User not found");
+
+            var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);
             if (farm == null)
                 throw new NotFoundException("Farm not found");
+
+            if (!CheckWhetherUserIsCollaborator(farm, userId))
+                if (!CheckWhetherUserIsOwner(farm, userId))
+                    throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             //UPDATE VITAL SIGNS AND SAVE
             await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm);
@@ -73,11 +81,19 @@ namespace Infrastructure.Services
             return farmForReturn;
         }
 
-        public async Task<FarmStatisticsDto> GetFarmStatisticsByIdAsync(Guid userId)
+        public async Task<FarmStatisticsDto> GetFarmStatisticsByFarmIdAsync(Guid userId, Guid farmId)
         {
-            var farm = await _repositoryManager.FarmRepository.GetFarmByUserIdAsync(userId, true);
+            var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
+            if(user == null)
+                throw new NotFoundException("User not found");
+
+            var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);
             if (farm == null)
                 throw new NotFoundException("Farm not found");
+
+            if (!CheckWhetherUserIsCollaborator(farm, userId))
+                if (!CheckWhetherUserIsOwner(farm, userId))
+                    throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             //UPDATE VITAL SIGNS AND SAVE
             await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm);
@@ -140,6 +156,24 @@ namespace Infrastructure.Services
 
             _repositoryManager.FarmRepository.DeleteFarm(farm);
             await _repositoryManager.SaveAsync();
+        }
+
+        private bool CheckWhetherUserIsOwner(Farm farm, Guid userId)
+        {
+            if (farm.UserId != userId)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CheckWhetherUserIsCollaborator(Farm farm, Guid userId)
+        {
+            if (farm.Collaborators.FirstOrDefault(c => c.Id == userId) == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

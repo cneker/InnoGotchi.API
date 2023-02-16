@@ -53,6 +53,9 @@ namespace InnoGotchi.API.Extensions
         public static void ConfigureUserService(this IServiceCollection services) =>
             services.AddScoped<IUserService, UserService>();
 
+        public static void ConfigureAvatarService(this IServiceCollection services) =>
+            services.AddScoped<IAvatarService, AvatarService>();
+
         public static void ConfigurActionFilters(this IServiceCollection services)
         {
             services.AddScoped<ValidationFilterAttribute>();

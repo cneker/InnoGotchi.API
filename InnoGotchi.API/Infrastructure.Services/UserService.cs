@@ -12,14 +12,16 @@ namespace Infrastructure.Services
         private readonly IRepositoryManager _repositoryManager;
         private readonly IAuthenticationService _authService;
         private readonly IMapper _mapper;
+        private readonly IAvatarService _avatarService;
 
 
-        public UserService(IRepositoryManager repositoryManager, 
-            IAuthenticationService authenticationService, IMapper mapper)
+        public UserService(IRepositoryManager repositoryManager,
+            IAuthenticationService authenticationService, IMapper mapper, IAvatarService avatarService)
         {
             _repositoryManager = repositoryManager;
             _authService = authenticationService;
             _mapper = mapper;
+            _avatarService = avatarService;
         }
 
         public async Task<UserInfoDto> CreateUserAsync(UserForRegistrationDto userForReg)
@@ -38,6 +40,17 @@ namespace Infrastructure.Services
 
         public async Task<IEnumerable<UserInfoDto>> GetUsersInfoAsync() =>
             _mapper.Map<IEnumerable<UserInfoDto>>(await _repositoryManager.UserRepository.GetUsersAsync(false));
+
+        public async Task<UserInfoForLayoutDto> GetUserInfoForLayoutByIdAsync(Guid id)
+        {
+            var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, false);
+            if (user == null)
+                throw new NotFoundException("User not found");
+
+            var userInfo = _mapper.Map<UserInfoForLayoutDto>(user);
+
+            return userInfo;
+        }
 
         public async Task DeleteUserById(Guid id)
         {
@@ -81,6 +94,19 @@ namespace Infrastructure.Services
                 throw new NotFoundException("User not found");
 
             _mapper.Map(userForUpdate, user);
+
+            await _repositoryManager.SaveAsync();
+        }
+
+        public async Task UpdateAvatarAsync(Guid id, AvatarChangingDto avatarDto)
+        {
+            var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, true);
+            if (user == null)
+                throw new NotFoundException("User not found");
+
+            var imagePath = await _avatarService.CreateImageAsync(id, avatarDto);
+            _avatarService.DeleteOldImage(user.AvatarPath);
+            user.AvatarPath = imagePath;
 
             await _repositoryManager.SaveAsync();
         }

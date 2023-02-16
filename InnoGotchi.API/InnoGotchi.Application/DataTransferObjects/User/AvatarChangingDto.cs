@@ -2,8 +2,7 @@
 {
     public class AvatarChangingDto
     {
-        public string Title { get; set; }
-        public string Version { get; set; }
-        //public IFormFile
+        public string Base64Image { get; set; }
+        public string FileName { get; set; }
     }
 }

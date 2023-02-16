@@ -11,7 +11,7 @@ namespace InnoGotchi.API.Middlewares
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, ILogger<ExceptionHandlerMiddleware> logger)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace InnoGotchi.API.Middlewares
                     _ => StatusCodes.Status500InternalServerError
                 };
                 var message = JsonSerializer.Serialize(new { message = ex.Message });
-
+                logger.LogError(message);
                 await response.WriteAsync(message);
             }
         }

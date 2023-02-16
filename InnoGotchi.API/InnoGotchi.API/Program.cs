@@ -17,6 +17,7 @@ builder.Services.ConfigureGenerateTokenService();
 builder.Services.ConfigurePetConditionService();
 builder.Services.ConfigurePetService();
 builder.Services.ConfigureUserService();
+builder.Services.ConfigureAvatarService();
 builder.Services.ConfigureAutoMapper();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<UserForRegistrationDtoValidator>();
@@ -24,6 +25,7 @@ builder.Services.ConfigurActionFilters();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.ConfigureAuthorization();
 builder.Services.AddCors();
+builder.Logging.AddConsole();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwagger();

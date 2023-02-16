@@ -11,19 +11,21 @@ namespace InnoGotchi.API.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authService;
+        private readonly ILogger _logger;
 
-        public AuthenticationController(IAuthenticationService authService)
+        public AuthenticationController(IAuthenticationService authService, ILogger<AuthenticationController> logger)
         {
             _authService = authService;
+            _logger = logger;
         }
 
         [HttpPost(Name = "SignIn")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> SignIn([FromBody] UserForAuthenticationDto userDto)
         {
-            var jwt = await _authService.SignInAsync(userDto);
-
-            return Ok(new AccessTokenDto { AccessToken = jwt});
+            var token = await _authService.SignInAsync(userDto);
+            _logger.LogInformation("Send JWT");
+            return Ok(token);
         }
     }
 }

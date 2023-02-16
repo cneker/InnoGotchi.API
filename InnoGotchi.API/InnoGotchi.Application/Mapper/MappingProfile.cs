@@ -4,6 +4,7 @@ using InnoGotchi.Application.DataTransferObjects.Farm;
 using InnoGotchi.Application.DataTransferObjects.Pet;
 using InnoGotchi.Application.DataTransferObjects.User;
 using InnoGotchi.Domain.Entities;
+using InnoGotchi.Domain.Enums;
 
 namespace InnoGotchi.Application.Mapper
 {
@@ -19,6 +20,7 @@ namespace InnoGotchi.Application.Mapper
                 .ForMember(u => u.FriendsFarms, opt => opt.Ignore())
                 .ForMember(u => u.Role, opt => opt.Ignore());
             CreateMap<User, UserInfoDto>();
+            CreateMap<User, UserInfoForLayoutDto>();
             CreateMap<UserInfoForUpdateDto, User>()
                 .ForMember(u => u.Id, opt => opt.Ignore()) 
                 .ForMember(u => u.Email, opt => opt.Ignore())
@@ -56,12 +58,20 @@ namespace InnoGotchi.Application.Mapper
                 .ForMember(p => p.Age,
                     opt => opt.MapFrom(p => petConditionService.CalculateAge(p)))
                 .ForMember(p => p.IsAlive,
-                    opt => opt.MapFrom(p => petConditionService.IsPetAlive(p)));
+                    opt => opt.MapFrom(p => petConditionService.IsPetAlive(p)))
+                .ForMember(p => p.HungerLevel,
+                    opt => opt.MapFrom(p => p.HungerLevel.ToString()))
+                .ForMember(p => p.ThirstyLevel,
+                    opt => opt.MapFrom(p => p.ThirstyLevel.ToString()));
             CreateMap<Pet, PetOverviewDto>()
-                .ForMember(p => p.Age, 
+                .ForMember(p => p.Age,
                     opt => opt.MapFrom(p => petConditionService.CalculateAge(p)))
-                .ForMember(p => p.IsAlive, 
-                    opt => opt.MapFrom(p => petConditionService.IsPetAlive(p)));
+                .ForMember(p => p.IsAlive,
+                    opt => opt.MapFrom(p => petConditionService.IsPetAlive(p)))
+                .ForMember(p => p.HungerLevel,
+                    opt => opt.MapFrom(p => p.HungerLevel.ToString()))
+                .ForMember(p => p.ThirstyLevel,
+                    opt => opt.MapFrom(p => p.ThirstyLevel.ToString()));
             CreateMap<PetForCreationDto, Pet>()
                 .ForMember(p => p.Id, opt => opt.Ignore())
                 .ForMember(p => p.Birthday, opt => opt.Ignore())
