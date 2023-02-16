@@ -14,14 +14,17 @@ namespace Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly IGenerateFarmStatisticsService _generatetStatistics;
         private readonly IPetConditionService _petConditionService;
+        private readonly ICheckUserService _checkUserService;
 
         public FarmService(IRepositoryManager repositoryManager, IMapper mapper,
-            IGenerateFarmStatisticsService generateStatistics, IPetConditionService petConditionService)
+            IGenerateFarmStatisticsService generateStatistics, IPetConditionService petConditionService, 
+            ICheckUserService checkUserService)
         {
             _repositoryManager = repositoryManager;
             _mapper = mapper;
             _generatetStatistics = generateStatistics;
             _petConditionService = petConditionService;
+            _checkUserService = checkUserService;
         }
 
         public async Task<IEnumerable<FarmOverviewDto>> GetFarmsOverviewAsync() =>
@@ -58,8 +61,8 @@ namespace Infrastructure.Services
             if (farm == null)
                 throw new NotFoundException("Farm not found");
 
-            if (!CheckWhetherUserIsCollaborator(farm, userId))
-                if (!CheckWhetherUserIsOwner(farm, userId))
+            if (!_checkUserService.CheckWhetherUserIsCollaborator(farm, userId))
+                if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                     throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             //UPDATE VITAL SIGNS AND SAVE
@@ -91,8 +94,8 @@ namespace Infrastructure.Services
             if (farm == null)
                 throw new NotFoundException("Farm not found");
 
-            if (!CheckWhetherUserIsCollaborator(farm, userId))
-                if (!CheckWhetherUserIsOwner(farm, userId))
+            if (!_checkUserService.CheckWhetherUserIsCollaborator(farm, userId))
+                if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                     throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             //UPDATE VITAL SIGNS AND SAVE
@@ -156,24 +159,6 @@ namespace Infrastructure.Services
 
             _repositoryManager.FarmRepository.DeleteFarm(farm);
             await _repositoryManager.SaveAsync();
-        }
-
-        private bool CheckWhetherUserIsOwner(Farm farm, Guid userId)
-        {
-            if (farm.UserId != userId)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private bool CheckWhetherUserIsCollaborator(Farm farm, Guid userId)
-        {
-            if (farm.Collaborators.FirstOrDefault(c => c.Id == userId) == null)
-            {
-                return false;
-            }
-            return true;
         }
     }
 }

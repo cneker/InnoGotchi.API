@@ -14,20 +14,22 @@ namespace Infrastructure.Services
         private readonly IRepositoryManager _repositoryManager;
         private readonly IMapper _mapper;
         private readonly IPetConditionService _petConditionService;
+        private readonly ICheckUserService _checkUserService;
 
-        public PetService(IRepositoryManager repositoryManager, IMapper mapper, 
-            IPetConditionService petConditionService)
+        public PetService(IRepositoryManager repositoryManager, IMapper mapper,
+            IPetConditionService petConditionService, ICheckUserService checkUserService)
         {
             _repositoryManager = repositoryManager;
             _mapper = mapper;
             _petConditionService = petConditionService;
+            _checkUserService = checkUserService;
         }
 
         public async Task<PetOverviewDto> CreatePetAsync(Guid userId, Guid farmId, PetForCreationDto petForCreation)
         {
             var farm = await CheckFarmExists(farmId);
 
-            if(!CheckWhetherUserIsOwner(farm, userId))
+            if(!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                 throw new AccessDeniedException("You are not the owner of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByNameAsync(petForCreation.Name, false);
@@ -54,8 +56,8 @@ namespace Infrastructure.Services
         {
             var farm = await CheckFarmExists(farmId);
 
-            if(!CheckWhetherUserIsCollaborator(farm, userId))
-                if(!CheckWhetherUserIsOwner(farm, userId))
+            if(!_checkUserService.CheckWhetherUserIsCollaborator(farm, userId))
+                if(!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                     throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
@@ -77,8 +79,8 @@ namespace Infrastructure.Services
         {
             var farm = await CheckFarmExists(farmId);
 
-            if (!CheckWhetherUserIsCollaborator(farm, userId))
-                if (!CheckWhetherUserIsOwner(farm, userId))
+            if (!_checkUserService.CheckWhetherUserIsCollaborator(farm, userId))
+                if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                     throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
@@ -110,8 +112,8 @@ namespace Infrastructure.Services
         {
             var farm = await CheckFarmExists(farmId);
 
-            if (!CheckWhetherUserIsCollaborator(farm, userId))
-                if (!CheckWhetherUserIsOwner(farm, userId))
+            if (!_checkUserService.CheckWhetherUserIsCollaborator(farm, userId))
+                if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                     throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
@@ -129,7 +131,7 @@ namespace Infrastructure.Services
         {
             var farm = await CheckFarmExists(farmId);
 
-            if(!CheckWhetherUserIsOwner(farm, userId))
+            if(!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                 throw new AccessDeniedException("You are not the owner of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
@@ -151,24 +153,6 @@ namespace Infrastructure.Services
                 throw new NotFoundException("Farm not found");
 
             return farm;
-        }
-
-        private bool CheckWhetherUserIsOwner(Farm farm, Guid userId)
-        {
-            if(farm.UserId != userId)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private bool CheckWhetherUserIsCollaborator(Farm farm, Guid userId)
-        {
-            if (farm.Collaborators.FirstOrDefault(c => c.Id == userId) == null)
-            {
-                return false;
-            }
-            return true;
         }
     }
 }
