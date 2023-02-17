@@ -10,14 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
-builder.Services.ConfigureAuthenticationService();
-builder.Services.ConfigureFarmService();
-builder.Services.ConfigureGenerateFarmStatisticsService();
-builder.Services.ConfigureGenerateTokenService();
-builder.Services.ConfigurePetConditionService();
-builder.Services.ConfigurePetService();
-builder.Services.ConfigureUserService();
-builder.Services.ConfigureAvatarService();
+builder.Services.ConfigureServices();
 builder.Services.ConfigureAutoMapper();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<UserForRegistrationDtoValidator>();

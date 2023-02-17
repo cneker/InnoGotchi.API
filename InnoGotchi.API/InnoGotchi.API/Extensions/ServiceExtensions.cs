@@ -32,32 +32,18 @@ namespace InnoGotchi.API.Extensions
                 mc.AddProfile(new MappingProfile(provider.GetService<IPetConditionService>()));
             }).CreateMapper());
 
-        public static void ConfigureAuthenticationService(this IServiceCollection services) =>
+        public static void ConfigureServices(this IServiceCollection services)
+        {
             services.AddScoped<IAuthenticationService, AuthenticationService>();
-
-        public static void ConfigureFarmService(this IServiceCollection services) =>
             services.AddScoped<IFarmService, FarmService>();
-
-        public static void ConfigureGenerateFarmStatisticsService(this IServiceCollection services) =>
             services.AddScoped<IGenerateFarmStatisticsService, GenerateFarmStatisticsService>();
-
-        public static void ConfigureGenerateTokenService(this IServiceCollection services) =>
             services.AddScoped<IGenerateTokenService, GenerateTokenService>();
-
-        public static void ConfigurePetConditionService(this IServiceCollection services) =>
             services.AddScoped<IPetConditionService, PetConditionService>();
-
-        public static void ConfigurePetService(this IServiceCollection service) =>
-            service.AddScoped<IPetService, PetService>();
-
-        public static void ConfigureUserService(this IServiceCollection services) =>
+            services.AddScoped<IPetService, PetService>();
             services.AddScoped<IUserService, UserService>();
-
-        public static void ConfigureAvatarService(this IServiceCollection services) =>
             services.AddScoped<IAvatarService, AvatarService>();
-
-        public static void ConfigureCheckUserService(this IServiceCollection services) =>
             services.AddScoped<ICheckUserService, CheckUserService>();
+        }
 
         public static void ConfigurActionFilters(this IServiceCollection services)
         {

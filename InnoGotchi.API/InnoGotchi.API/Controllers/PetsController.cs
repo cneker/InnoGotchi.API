@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
-    [Route("api/users/{userId}/farms/{farmId}/pets")]
+    [Route("api/users/{userId}/farm/{farmId}/pets")]
     [ApiController]
     public class PetsController : ControllerBase
     {
