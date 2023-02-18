@@ -98,14 +98,20 @@ namespace Infrastructure.Services
             await _repositoryManager.SaveAsync();
         }
 
-        public async Task<IEnumerable<PetOverviewDto>> GetAllPetsAsync(PetParameters petParameters)
+        public async Task<PetPagingDto> GetAllPetsAsync(PetParameters petParameters)
         {
             var pets = await _repositoryManager.PetRepository.GetAllPetsAsync(petParameters, true);
             //UPDATE VITAL SIGNS AND SAVE
             foreach (var pet in pets)
                 await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
 
-            return _mapper.Map<IEnumerable<PetOverviewDto>>(pets);
+            var petPagingDto = new PetPagingDto
+            {
+                MetaData = pets.MetaData,
+                PetOverviewDtos = _mapper.Map<IEnumerable<PetDetailsDto>>(pets)
+            };
+
+            return petPagingDto;
         }
 
         public async Task<PetDetailsDto> GetPetByIdAsync(Guid userId, Guid farmId, Guid id)

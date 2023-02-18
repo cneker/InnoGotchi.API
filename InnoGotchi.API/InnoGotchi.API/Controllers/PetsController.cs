@@ -4,6 +4,7 @@ using InnoGotchi.Application.DataTransferObjects.Pet;
 using InnoGotchi.Application.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace InnoGotchi.API.Controllers
 {
@@ -23,8 +24,11 @@ namespace InnoGotchi.API.Controllers
         public async Task<IActionResult> GetPets([FromQuery] PetParameters petParameters)
         {
             var pets = await _petService.GetAllPetsAsync(petParameters);
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(pets.MetaData));
+
             _logger.LogInformation("Send all pets");
-            return Ok(pets);
+            return Ok(pets.PetOverviewDtos);
         }
 
         [HttpGet("{id}", Name = "GetPet"), Authorize]

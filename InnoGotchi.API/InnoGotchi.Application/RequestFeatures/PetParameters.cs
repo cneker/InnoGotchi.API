@@ -4,7 +4,7 @@
     {
         public PetParameters()
         {
-            OrderBy = "name";
+            OrderBy = "happynessdaycount";
         }
     }
 }
