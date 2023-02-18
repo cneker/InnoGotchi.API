@@ -68,20 +68,20 @@ namespace InnoGotchi.API.Controllers
             return Ok(friends);
         }
 
-        [HttpPost("collaborators"), Authorize]
+        [HttpPost("{farmId}/invite-collaborator"), Authorize]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> InviteCollaborator(Guid id, [FromBody] UserForInvitingDto userDto)
+        public async Task<IActionResult> InviteCollaborator(Guid id, Guid farmId, [FromBody] UserForInvitingDto userDto)
         {
-            await _farmService.InviteFriendAsync(id, userDto);
+            await _farmService.InviteFriendAsync(id, farmId, userDto);
             _logger.LogInformation("Collaborator was invited");
             return NoContent();
         }
 
-        [HttpPut]
+        [HttpPut("{farmId}")]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
-        public async Task<IActionResult> UpdateFarm(Guid id, [FromBody] FarmForUpdateDto farmDto)
+        public async Task<IActionResult> UpdateFarm(Guid id, Guid farmId, [FromBody] FarmForUpdateDto farmDto)
         {
-            await _farmService.UpdateFarmNameAsync(id, farmDto);
+            await _farmService.UpdateFarmNameAsync(id, farmId, farmDto);
             _logger.LogInformation("Farm was updated");
             return NoContent();
         }

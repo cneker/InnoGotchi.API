@@ -117,14 +117,14 @@ namespace Infrastructure.Services
             return farms;
         }
 
-        public async Task InviteFriendAsync(Guid userId, UserForInvitingDto userForInviting)
+        public async Task InviteFriendAsync(Guid userId, Guid farmId, UserForInvitingDto userForInviting)
         {  
             var friend = await _repositoryManager.UserRepository.
                 GetUserByEmailAsync(userForInviting.Email, false);
             if(friend == null)
                 throw new NotFoundException("User not found");
 
-            var farm = await _repositoryManager.FarmRepository.GetFarmByUserIdAsync(userId, true);
+            var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);
             if (farm == null)
                 throw new NotFoundException("Farm not found");
 
@@ -138,9 +138,9 @@ namespace Infrastructure.Services
             await _repositoryManager.SaveAsync();
         }
 
-        public async Task UpdateFarmNameAsync(Guid userId, FarmForUpdateDto farmForUpdate)
+        public async Task UpdateFarmNameAsync(Guid userId, Guid farmId, FarmForUpdateDto farmForUpdate)
         {
-            var farm = await _repositoryManager.FarmRepository.GetFarmByUserIdAsync(userId, true);
+            var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);
             if (farm == null)
                 throw new NotFoundException("Farm not found");
 

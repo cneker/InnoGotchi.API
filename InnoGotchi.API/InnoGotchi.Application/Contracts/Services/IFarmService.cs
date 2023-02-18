@@ -11,8 +11,8 @@ namespace InnoGotchi.Application.Contracts.Services
         Task<FarmOverviewDto> GetFarmOverviewByIdAsync(Guid userId);
         Task<FarmDetailsDto> GetFarmDetailsByFarmIdAsync(Guid userId, Guid farmId);
         Task<FarmStatisticsDto> GetFarmStatisticsByFarmIdAsync(Guid userId, Guid farmId);
-        Task UpdateFarmNameAsync(Guid userId, FarmForUpdateDto farmForUpdate);
-        Task InviteFriendAsync(Guid userId, UserForInvitingDto userForInviting);
+        Task UpdateFarmNameAsync(Guid userId, Guid farmId, FarmForUpdateDto farmForUpdate);
+        Task InviteFriendAsync(Guid userId, Guid farmId, UserForInvitingDto userForInviting);
         Task DeleteFarmById(Guid id);
     }
 }
