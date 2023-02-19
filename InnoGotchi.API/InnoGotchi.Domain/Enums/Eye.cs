@@ -2,7 +2,7 @@
 {
     public enum Eye
     {
-        Common,
+        Common = 1,
         CinemaGlasses,
         Mesh,
         Single,

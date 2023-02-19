@@ -2,7 +2,7 @@
 {
     public enum Body
     {
-        Frog,
+        Frog = 1,
         Ball,
         StickMan,
         Human,

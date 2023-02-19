@@ -2,7 +2,7 @@
 {
     public enum Mouth
     {
-        Vampire,
+        Vampire = 1,
         SpanchBob,
         Tongue,
         Common,

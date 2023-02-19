@@ -2,7 +2,7 @@
 {
     public enum Nose
     {
-        Duck,
+        Duck = 1,
         Cow,
         Pig,
         Common,
