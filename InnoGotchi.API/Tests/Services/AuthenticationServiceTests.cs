@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Services;
 using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
+using InnoGotchi.Application.DataTransferObjects;
 using InnoGotchi.Application.DataTransferObjects.User;
 using InnoGotchi.Application.Exceptions;
 using InnoGotchi.Domain.Entities;
@@ -61,7 +62,6 @@ namespace Tests.Services
         public async Task SignInAsync_ReturnsJWT_WhenUserEmailAndPasswordAreValid()
         {
             //Arrange
-            var token = _fixture.Create<string>();
             var userDto = _fixture.Build<UserForAuthenticationDto>()
                 .With(u => u.Password, "qwerty")
                 .Create();
@@ -70,6 +70,9 @@ namespace Tests.Services
                 .Without(u => u.UserFarm)
                 .Without(u => u.FriendsFarms)
                 .Create();
+            var token = _fixture.Build<AccessTokenDto>()
+                .With(t => t.UserId, user.Id)
+                .Create();
 
             var repMock = new Mock<IRepositoryManager>();
             repMock.Setup(a => a.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), false))
@@ -77,7 +80,7 @@ namespace Tests.Services
 
             var tokenMock = new Mock<IGenerateTokenService>();
             tokenMock.Setup(a => a.GenerateToken(user))
-                .Returns(token);
+                .Returns(token.AccessToken);
 
             var service = new AuthenticationService(repMock.Object, tokenMock.Object);
 
@@ -85,7 +88,7 @@ namespace Tests.Services
             var result = await service.SignInAsync(userDto);
 
             //Assert
-            token.Should().Be(result);
+            token.Should().BeEquivalentTo(result);
             tokenMock.Verify(a => a.GenerateToken(user), Times.Once);
         }
 

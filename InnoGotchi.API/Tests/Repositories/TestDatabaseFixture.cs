@@ -6,7 +6,7 @@ namespace Tests.Repositories
 {
     public class TestDatabaseFixture
     {
-        private readonly string _connectionString 
+        private readonly string _connectionString
             = "server=(localdb)\\mssqllocaldb; database=InnoGotchiTests; Integrated Security = true";
         private readonly Fixture _fixture;
         public AppDbContext Context { get; init; }

@@ -11,7 +11,7 @@ namespace Tests.Services
         {
             _fixture = new Fixture();
         }
-        
+
         [Fact]
         public void GenerateToken_ReturnsJWT()
         {

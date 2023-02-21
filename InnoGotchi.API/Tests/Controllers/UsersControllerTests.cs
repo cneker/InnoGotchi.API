@@ -2,15 +2,19 @@
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.User;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Tests.Controllers
 {
     public class UsersControllerTests
     {
         private readonly IFixture _fixture;
+        private readonly ILogger<UsersController> _loggerMock;
+
         public UsersControllerTests()
         {
-            _fixture = new Fixture();   
+            _fixture = new Fixture();
+            _loggerMock = Mock.Of<ILogger<UsersController>>();
         }
 
         [Fact]
@@ -22,7 +26,7 @@ namespace Tests.Controllers
             userServiceMock.Setup(s => s.GetUsersInfoAsync())
                 .Returns(Task.FromResult(usersInfo));
 
-            var controller = new UsersController(userServiceMock.Object);
+            var controller = new UsersController(userServiceMock.Object, _loggerMock);
 
             //Act
             var result = await controller.GetUsers();
@@ -31,7 +35,7 @@ namespace Tests.Controllers
             var okResult = result.Should().BeOfType<OkObjectResult>();
             (okResult.Which.Value as IEnumerable<UserInfoDto>).Should().NotBeNull()
                 .And.AllBeOfType<UserInfoDto>()
-                .And.HaveCount(5); 
+                .And.HaveCount(5);
         }
 
         [Fact]
@@ -46,7 +50,7 @@ namespace Tests.Controllers
             userServiceMock.Setup(s => s.GetUserInfoByIdAsync(id))
                 .Returns(Task.FromResult(userInfo));
 
-            var controller = new UsersController(userServiceMock.Object);
+            var controller = new UsersController(userServiceMock.Object, _loggerMock);
 
             //Act
             var result = await controller.GetUser(id);
@@ -71,15 +75,15 @@ namespace Tests.Controllers
             userServiceMock.Setup(s => s.CreateUserAsync(userForReg))
                 .Returns(Task.FromResult(userInfo));
 
-            var controller = new UsersController(userServiceMock.Object);
+            var controller = new UsersController(userServiceMock.Object, _loggerMock);
 
             //Act
             var result = await controller.CreateUser(userForReg);
 
             //Assert
             var createdAtRouteResult = result.Should().BeOfType<CreatedAtRouteResult>();
-            (createdAtRouteResult.Which.Value as string).Should().NotBeNull()
-                .And.Be(userForReg.Email);
+            (createdAtRouteResult.Which.Value as UserInfoDto).Should().NotBeNull()
+                .And.BeEquivalentTo(userInfo);
         }
 
         [Fact]
@@ -92,7 +96,7 @@ namespace Tests.Controllers
             userServiceMock.Setup(s => s.UpdateUserInfoAsync(id, userInfoForUpdate))
                 .Returns(Task.CompletedTask);
 
-            var controller = new UsersController(userServiceMock.Object);
+            var controller = new UsersController(userServiceMock.Object, _loggerMock);
 
             //Act
             var result = await controller.UpdateUserInfo(id, userInfoForUpdate);
@@ -111,7 +115,7 @@ namespace Tests.Controllers
             userServiceMock.Setup(s => s.UpdatePasswordAsync(id, passwordChanging))
                 .Returns(Task.CompletedTask);
 
-            var controller = new UsersController(userServiceMock.Object);
+            var controller = new UsersController(userServiceMock.Object, _loggerMock);
 
             //Act
             var result = await controller.ChangeUserPassword(id, passwordChanging);
@@ -129,7 +133,7 @@ namespace Tests.Controllers
             userServiceMock.Setup(s => s.DeleteUserById(id))
                 .Returns(Task.CompletedTask);
 
-            var controller = new UsersController(userServiceMock.Object);
+            var controller = new UsersController(userServiceMock.Object, _loggerMock);
 
             //Act
             var result = await controller.DeleteUser(id);
@@ -138,10 +142,46 @@ namespace Tests.Controllers
             result.Should().BeOfType<NoContentResult>();
         }
 
-        //[Fact]
-        //public async Task UpdateAvatar_ReturnsNoContent()
-        //{
+        [Fact]
+        public async Task GetUserForLayout_ReturnsOkResulnAndUserForLayoutDto()
+        {
+            //Arrange
+            var id = _fixture.Create<Guid>();
+            var userInfoForLayout = _fixture.Build<UserInfoForLayoutDto>()
+                .With(u => u.Id, id)
+                .Create();
+            var userServiceMock = new Mock<IUserService>();
+            userServiceMock.Setup(s => s.GetUserInfoForLayoutByIdAsync(id))
+                .Returns(Task.FromResult(userInfoForLayout));
 
-        //}
+            var controller = new UsersController(userServiceMock.Object, _loggerMock);
+
+            //Act
+            var result = await controller.GetUserForLayout(id);
+
+            //Assert
+            var okResult = result.Should().BeOfType<OkObjectResult>();
+            (okResult.Which.Value as UserInfoForLayoutDto).Should().NotBeNull()
+                .And.Match<UserInfoForLayoutDto>(u => u.Id == id);
+        }
+
+        [Fact]
+        public async Task UpdateAvatar_ReturnsNoContentResult()
+        {
+            //Arrange
+            var id = _fixture.Create<Guid>();
+            var avatarChangingDto = _fixture.Create<AvatarChangingDto>();
+            var userServiceMock = new Mock<IUserService>();
+            userServiceMock.Setup(s => s.UpdateAvatarAsync(id, avatarChangingDto))
+                .Returns(Task.CompletedTask);
+
+            var controller = new UsersController(userServiceMock.Object, _loggerMock);
+
+            //Act
+            var result = await controller.UpdateAvatar(id, avatarChangingDto);
+
+            //Assert
+            result.Should().BeOfType<NoContentResult>();
+        }
     }
 }
