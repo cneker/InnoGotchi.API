@@ -212,7 +212,7 @@ namespace Infrastructure.Services
                     }
                 }
             }
-            return count;
+            return Math.Round(count / 24, 1);
         }
     }
 }

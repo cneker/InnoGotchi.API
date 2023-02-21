@@ -1,6 +1,7 @@
 ﻿using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.Farm;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Services
 {
@@ -19,10 +20,8 @@ namespace Infrastructure.Services
         {
             var pets = await _repositoryManager.PetRepository.GetPetsByFarmIdAsync(farm.Id, false);
 
-            farm.AlivePetsCount =
-                (await _repositoryManager.PetRepository.GetAlivePetsByFarmAsync(farm.Id, false)).Count();
-            farm.DeadPetsCount =
-                (await _repositoryManager.PetRepository.GetDeadPetsByFarmAsync(farm.Id, false)).Count();
+            farm.AlivePetsCount = pets.Count(p => p.DeathDay == null);
+            farm.DeadPetsCount = pets.Count(p => p.DeathDay != null);
             if (pets.Any())
             {
                 farm.AveragePetsAge = Convert.ToInt32(pets.Average(p => _petConditionService.CalculateAge(p)));
@@ -51,7 +50,7 @@ namespace Infrastructure.Services
                 if (petDates.Count() > 1)
                     periods.Add(period / (petDates.Count() - 1));
             }
-            return Math.Round(periods.Average() / 24, 1);
+            return periods.IsNullOrEmpty() ? 0 : Math.Round(periods.Average() / 24, 1);
         }
 
         private async Task<double> CalculateAverageDrinkingPeriod(Guid farmId)
@@ -73,7 +72,7 @@ namespace Infrastructure.Services
                 if (petDates.Count() > 1)
                     periods.Add(period / (petDates.Count() - 1));
             }
-            return Math.Round(periods.Average() / 24, 1);
+            return periods.IsNullOrEmpty() ? 0 : Math.Round(periods.Average() / 24, 1);
         }
     }
 }

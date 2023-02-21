@@ -118,7 +118,7 @@ namespace Infrastructure.Services
         public async Task InviteFriendAsync(Guid userId, Guid farmId, UserForInvitingDto userForInviting)
         {
             var friend = await _repositoryManager.UserRepository.
-                GetUserByEmailAsync(userForInviting.Email, false);
+                GetUserByEmailAsync(userForInviting.Email, true);
             if (friend == null)
                 throw new NotFoundException("User not found");
 

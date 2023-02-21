@@ -27,6 +27,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetUser"), Authorize]
+        [ServiceFilter(typeof(CheckWhetherUserIsOwnerAttribute))]
         public async Task<IActionResult> GetUser(Guid id)
         {
             var userDto = await _userService.GetUserInfoByIdAsync(id);
@@ -45,6 +46,7 @@ namespace InnoGotchi.API.Controllers
 
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
+        [ServiceFilter(typeof(CheckWhetherUserIsOwnerAttribute))]
         public async Task<IActionResult> UpdateUserInfo(Guid id, [FromBody] UserInfoForUpdateDto userDto)
         {
             await _userService.UpdateUserInfoAsync(id, userDto);
@@ -54,6 +56,7 @@ namespace InnoGotchi.API.Controllers
 
         [HttpPut("{id}/change-password")]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
+        [ServiceFilter(typeof(CheckWhetherUserIsOwnerAttribute))]
         public async Task<IActionResult> ChangeUserPassword(Guid id, [FromBody] PasswordChangingDto passwordDto)
         {
             await _userService.UpdatePasswordAsync(id, passwordDto);
@@ -70,6 +73,7 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpPut("{id}/update-avatar"), Authorize]
+        [ServiceFilter(typeof(CheckWhetherUserIsOwnerAttribute))]
         public async Task<IActionResult> UpdateAvatar(Guid id, AvatarChangingDto avatarDto)
         {
             await _userService.UpdateAvatarAsync(id, avatarDto);
