@@ -6,7 +6,7 @@ namespace Infrastructure.Persistance.Repositories
 {
     public class FeedingHistoryRepository : RepositoryBase<HungryStateChanges>, IFeedingHistoryRepository
     {
-        public FeedingHistoryRepository(AppDbContext repositoryContext) 
+        public FeedingHistoryRepository(AppDbContext repositoryContext)
             : base(repositoryContext)
         {
         }

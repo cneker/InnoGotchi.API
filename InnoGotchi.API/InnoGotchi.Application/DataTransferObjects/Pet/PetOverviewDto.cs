@@ -1,6 +1,4 @@
-﻿using InnoGotchi.Domain.Enums;
-
-namespace InnoGotchi.Application.DataTransferObjects.Pet
+﻿namespace InnoGotchi.Application.DataTransferObjects.Pet
 {
     public class PetOverviewDto
     {

@@ -68,7 +68,7 @@ namespace InnoGotchi.API.Controllers
         [HttpPut("{id}/give-a-drink"), Authorize]
         public async Task<IActionResult> GiveADrinkToThePet(Guid userId, Guid farmId, Guid id)
         {
-            await _petService.GiveADrinkToPetAsync (userId, farmId, id);
+            await _petService.GiveADrinkToPetAsync(userId, farmId, id);
             _logger.LogInformation("Given drink to the pet");
             return NoContent();
         }

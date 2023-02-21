@@ -6,7 +6,7 @@ namespace Infrastructure.Persistance.Repositories
 {
     public class DrinkingHistoryRepository : RepositoryBase<ThirstyStateChanges>, IDrinkingHistoryRepository
     {
-        public DrinkingHistoryRepository(AppDbContext repositoryContext) 
+        public DrinkingHistoryRepository(AppDbContext repositoryContext)
             : base(repositoryContext)
         {
         }

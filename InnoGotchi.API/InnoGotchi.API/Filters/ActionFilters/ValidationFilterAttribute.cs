@@ -13,15 +13,15 @@ namespace InnoGotchi.API.Filters.ActionFilters
             var param = context.ActionArguments
                 .SingleOrDefault(p => p.Value.ToString().Contains("Dto")).Value;
 
-            if(param == null)
+            if (param == null)
             {
                 context.Result =
                     new BadRequestObjectResult($"Object is null. Controller: {controller}, action: {action}");
             }
-            
-            if(!context.ModelState.IsValid)
+
+            if (!context.ModelState.IsValid)
             {
-                context.Result = 
+                context.Result =
                     new UnprocessableEntityObjectResult(context.ModelState);
             }
             else

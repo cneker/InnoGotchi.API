@@ -1,6 +1,5 @@
 ﻿using InnoGotchi.Application.Contracts.Services;
 using InnoGotchi.Application.DataTransferObjects.User;
-using System.IO;
 
 namespace Infrastructure.Services
 {
@@ -20,7 +19,7 @@ namespace Infrastructure.Services
 
         public void DeleteOldImage(string avatarPath)
         {
-            if(avatarPath != "default.jpg")
+            if (avatarPath != "default.jpg")
             {
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "avatars", avatarPath);
                 File.Delete(path);

@@ -17,7 +17,7 @@ namespace Infrastructure.Services
         private readonly ICheckUserService _checkUserService;
 
         public FarmService(IRepositoryManager repositoryManager, IMapper mapper,
-            IGenerateFarmStatisticsService generateStatistics, IPetConditionService petConditionService, 
+            IGenerateFarmStatisticsService generateStatistics, IPetConditionService petConditionService,
             ICheckUserService checkUserService)
         {
             _repositoryManager = repositoryManager;
@@ -33,7 +33,7 @@ namespace Infrastructure.Services
         public async Task<FarmOverviewDto> CreateFarmAsync(Guid userId, FarmForCreationDto farmForCreation)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
-            if(user == null)
+            if (user == null)
                 throw new NotFoundException("User not found");
 
             if (user.UserFarm != null)
@@ -54,7 +54,7 @@ namespace Infrastructure.Services
         public async Task<FarmDetailsDto> GetFarmDetailsByFarmIdAsync(Guid userId, Guid farmId)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
-            if(user == null)
+            if (user == null)
                 throw new NotFoundException("User not found");
 
             var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);
@@ -65,7 +65,6 @@ namespace Infrastructure.Services
                 if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                     throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
-            //UPDATE VITAL SIGNS AND SAVE
             await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm);
 
             var farmForReturn = _mapper.Map<FarmDetailsDto>(farm);
@@ -87,7 +86,7 @@ namespace Infrastructure.Services
         public async Task<FarmStatisticsDto> GetFarmStatisticsByFarmIdAsync(Guid userId, Guid farmId)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
-            if(user == null)
+            if (user == null)
                 throw new NotFoundException("User not found");
 
             var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);
@@ -98,7 +97,6 @@ namespace Infrastructure.Services
                 if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                     throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
-            //UPDATE VITAL SIGNS AND SAVE
             await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm);
 
             var farmForReturn = _mapper.Map<FarmStatisticsDto>(farm);
@@ -118,10 +116,10 @@ namespace Infrastructure.Services
         }
 
         public async Task InviteFriendAsync(Guid userId, Guid farmId, UserForInvitingDto userForInviting)
-        {  
+        {
             var friend = await _repositoryManager.UserRepository.
                 GetUserByEmailAsync(userForInviting.Email, false);
-            if(friend == null)
+            if (friend == null)
                 throw new NotFoundException("User not found");
 
             var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);

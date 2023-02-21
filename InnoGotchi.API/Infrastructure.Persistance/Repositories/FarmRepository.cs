@@ -21,7 +21,7 @@ namespace Infrastructure.Persistance.Repositories
             .Include(f => f.Collaborators)
             .Include(p => p.Pets)
             .SingleOrDefaultAsync();
-        
+
         public async Task<Farm> GetFarmByUserIdAsync(Guid userId, bool trackChanges) =>
             await GetByCondition(f => f.UserId == userId, trackChanges)
             .Include(f => f.Collaborators)

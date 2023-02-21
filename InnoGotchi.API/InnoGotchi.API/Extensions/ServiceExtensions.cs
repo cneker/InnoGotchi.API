@@ -89,7 +89,7 @@ namespace InnoGotchi.API.Extensions
         {
             services.AddSwaggerGen(s =>
             {
-                s.SwaggerDoc("InnoGotchi", new OpenApiInfo 
+                s.SwaggerDoc("InnoGotchi", new OpenApiInfo
                 {
                     Title = "InnoGotchi API",
                     Description = "Test task for Innowise",

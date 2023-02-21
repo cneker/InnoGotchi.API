@@ -27,7 +27,7 @@ namespace Infrastructure.Services
         public async Task<UserInfoDto> CreateUserAsync(UserForRegistrationDto userForReg)
         {
             var user = await _repositoryManager.UserRepository.GetUserByEmailAsync(userForReg.Email, false);
-            if(user != null)
+            if (user != null)
                 throw new AlreadyExistsException("The email has already registered");
 
             user = _mapper.Map<User>(userForReg);

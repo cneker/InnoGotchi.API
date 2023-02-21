@@ -1,6 +1,5 @@
 ﻿using InnoGotchi.API.Filters.ActionFilters;
 using InnoGotchi.Application.Contracts.Services;
-using InnoGotchi.Application.DataTransferObjects;
 using InnoGotchi.Application.DataTransferObjects.User;
 using Microsoft.AspNetCore.Mvc;
 

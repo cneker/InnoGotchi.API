@@ -19,7 +19,7 @@ namespace Infrastructure.Persistance
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            
+
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new FarmConfiguration());
             builder.ApplyConfiguration(new PetConfiguration());

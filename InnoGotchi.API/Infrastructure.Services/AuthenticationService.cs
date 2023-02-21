@@ -34,7 +34,7 @@ namespace Infrastructure.Services
 
             var jwt = _tokenService.GenerateToken(user);
 
-            return new AccessTokenDto { AccessToken= jwt, UserId = user.Id };
+            return new AccessTokenDto { AccessToken = jwt, UserId = user.Id };
         }
 
         public bool VerifyPasswordHash(string password, string passwordHash) =>

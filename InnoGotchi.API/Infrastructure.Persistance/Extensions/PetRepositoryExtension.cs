@@ -1,7 +1,7 @@
 ﻿using InnoGotchi.Domain.Entities;
+using System.Linq.Dynamic.Core;
 using System.Reflection;
 using System.Text;
-using System.Linq.Dynamic.Core;
 
 namespace Infrastructure.Persistance.Extensions
 {

@@ -47,7 +47,7 @@ namespace Infrastructure.Persistance.Repositories
             Delete(pet);
 
         public async Task<IEnumerable<Pet>> GetAlivePetsByFarmAsync(Guid farmId, bool trackChanges) =>
-            await GetByCondition(p => p.FarmId == farmId && p.HungerLevel != HungerLevel.Dead 
+            await GetByCondition(p => p.FarmId == farmId && p.HungerLevel != HungerLevel.Dead
                 && p.ThirstyLevel != ThirstyLevel.Dead, trackChanges)
             .ToListAsync();
 
