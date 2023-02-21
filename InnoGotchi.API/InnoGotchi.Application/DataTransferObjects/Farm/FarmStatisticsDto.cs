@@ -8,7 +8,7 @@
         public int DeadPetsCount { get; set; }
         public double AverageFeedingPeriod { get; set; }
         public double AverageThirstQuenchingPeriod { get; set; }
-        public int AveragePetsHappinessDaysCount { get; set; }
+        public double AveragePetsHappinessDaysCount { get; set; }
         public int AveragePetsAge { get; set; }
     }
 }

@@ -29,21 +29,21 @@ namespace Infrastructure.Services
         {
             var farm = await CheckFarmExists(farmId);
 
-            if(!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
+            if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                 throw new AccessDeniedException("You are not the owner of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByNameAsync(petForCreation.Name, false);
-            if(pet != null)
+            if (pet != null)
                 throw new IncorrectRequestException("This name has alredy registered");
 
             pet = _mapper.Map<Pet>(petForCreation);
             pet.FarmId = farmId;
             await _repositoryManager.PetRepository.CreatePetAsync(pet);
 
-            var feeding = new HungryStateChanges() 
-                { PetId = pet.Id, ChangesDate = DateTime.Now, HungerState = HungerLevel.Normal };
-            var drinking = new ThirstyStateChanges() 
-                { PetId = pet.Id, ChangesDate = DateTime.Now, ThirstyState = ThirstyLevel.Normal };
+            var feeding = new HungryStateChanges()
+            { PetId = pet.Id, ChangesDate = DateTime.Now, HungerState = HungerLevel.Normal };
+            var drinking = new ThirstyStateChanges()
+            { PetId = pet.Id, ChangesDate = DateTime.Now, ThirstyState = ThirstyLevel.Normal };
             await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
             await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
 
@@ -56,19 +56,20 @@ namespace Infrastructure.Services
         {
             var farm = await CheckFarmExists(farmId);
 
-            if(!_checkUserService.CheckWhetherUserIsCollaborator(farm, userId))
-                if(!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
+            if (!_checkUserService.CheckWhetherUserIsCollaborator(farm, userId))
+                if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                     throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
                 throw new NotFoundException("Pet not found");
+            await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
 
-            if(!_petConditionService.IsPetAlive(pet))
+            if (!_petConditionService.IsPetAlive(pet))
                 throw new PetIsDeadException("Rest and peace");
 
-            var feeding = new HungryStateChanges() 
-                { PetId = id, ChangesDate = DateTime.Now, HungerState = HungerLevel.Full, IsFeeding = true };
+            var feeding = new HungryStateChanges()
+            { PetId = id, ChangesDate = DateTime.Now, HungerState = HungerLevel.Full, IsFeeding = true };
             await _repositoryManager.FeedingHistoryRepository.CreateRecordAsync(feeding);
 
             pet.HungerLevel = HungerLevel.Full;
@@ -86,12 +87,13 @@ namespace Infrastructure.Services
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
                 throw new NotFoundException("Pet not found");
+            await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
 
             if (!_petConditionService.IsPetAlive(pet))
                 throw new PetIsDeadException("Rest and peace");
 
-            var drinking = new ThirstyStateChanges() 
-                { PetId = id, ChangesDate = DateTime.Now, ThirstyState = ThirstyLevel.Full, IsDrinking = true };
+            var drinking = new ThirstyStateChanges()
+            { PetId = id, ChangesDate = DateTime.Now, ThirstyState = ThirstyLevel.Full, IsDrinking = true };
             await _repositoryManager.DrinkingHistoryRepository.CreateRecordAsync(drinking);
 
             pet.ThirstyLevel = ThirstyLevel.Full;
@@ -101,7 +103,7 @@ namespace Infrastructure.Services
         public async Task<PetPagingDto> GetAllPetsAsync(PetParameters petParameters)
         {
             var pets = await _repositoryManager.PetRepository.GetAllPetsAsync(petParameters, true);
-            //UPDATE VITAL SIGNS AND SAVE
+
             foreach (var pet in pets)
                 await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
 
@@ -125,7 +127,7 @@ namespace Infrastructure.Services
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
                 throw new NotFoundException("Pet not found");
-            //UPDATE VITAL SIGNS AND SAVE
+
             await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
 
             var petForReturn = _mapper.Map<PetDetailsDto>(pet);
@@ -137,7 +139,7 @@ namespace Infrastructure.Services
         {
             var farm = await CheckFarmExists(farmId);
 
-            if(!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
+            if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                 throw new AccessDeniedException("You are not the owner of this farm");
 
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);

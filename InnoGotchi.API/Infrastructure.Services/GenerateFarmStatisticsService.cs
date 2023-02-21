@@ -19,14 +19,14 @@ namespace Infrastructure.Services
         {
             var pets = await _repositoryManager.PetRepository.GetPetsByFarmIdAsync(farm.Id, false);
 
-            farm.AlivePetsCount = 
+            farm.AlivePetsCount =
                 (await _repositoryManager.PetRepository.GetAlivePetsByFarmAsync(farm.Id, false)).Count();
             farm.DeadPetsCount =
                 (await _repositoryManager.PetRepository.GetDeadPetsByFarmAsync(farm.Id, false)).Count();
-            if(pets.Any())
+            if (pets.Any())
             {
                 farm.AveragePetsAge = Convert.ToInt32(pets.Average(p => _petConditionService.CalculateAge(p)));
-                farm.AveragePetsHappinessDaysCount = Convert.ToInt32(pets.Average(p => p.HappynessDayCount));
+                farm.AveragePetsHappinessDaysCount = Math.Round(pets.Average(p => p.HappynessDayCount) / 24, 1);
             }
             farm.AverageFeedingPeriod = await CalculateAverageFeedingPeriod(farm.Id);
             farm.AverageThirstQuenchingPeriod = await CalculateAverageDrinkingPeriod(farm.Id);
@@ -38,15 +38,20 @@ namespace Infrastructure.Services
             var hungryStatesChangesRecords = await _repositoryManager
                 .FeedingHistoryRepository
                 .GetHistoryByFarmIdAsync(farmId, false);
-
             var dates = hungryStatesChangesRecords.Where(r => r.IsFeeding).OrderBy(r => r.ChangesDate)
-                .Select(r => r.ChangesDate).ToArray();
+                .GroupBy(r => r.PetId).Select(g => g.ToArray());
             double period = 0.0;
-            for(int i = 1; i < dates.Count(); i++)
+            var periods = new List<double>();
+            foreach (var petDates in dates)
             {
-                period += (dates[i] - dates[i - 1]).TotalHours;
+                for (int i = 1; i < petDates.Count(); i++)
+                {
+                    period += (petDates[i].ChangesDate - petDates[i - 1].ChangesDate).TotalHours;
+                }
+                if (petDates.Count() > 1)
+                    periods.Add(period / (petDates.Count() - 1));
             }
-            return period / (dates.Count() - 1);
+            return Math.Round(periods.Average() / 24, 1);
         }
 
         private async Task<double> CalculateAverageDrinkingPeriod(Guid farmId)
@@ -56,13 +61,19 @@ namespace Infrastructure.Services
                 .GetHistoryByFarmIdAsync(farmId, false);
 
             var dates = thirstyStatesChangesRecords.Where(r => r.IsDrinking).OrderBy(r => r.ChangesDate)
-                .Select(r => r.ChangesDate).ToArray();
+                .GroupBy(r => r.PetId).Select(g => g.ToArray());
             double period = 0.0;
-            for (int i = 1; i < dates.Count(); i++)
+            var periods = new List<double>();
+            foreach (var petDates in dates)
             {
-                period += (dates[i] - dates[i - 1]).TotalHours;
+                for (int i = 1; i < petDates.Count(); i++)
+                {
+                    period += (petDates[i].ChangesDate - petDates[i - 1].ChangesDate).TotalHours;
+                }
+                if (petDates.Count() > 1)
+                    periods.Add(period / (petDates.Count() - 1));
             }
-            return period / (dates.Count() - 1);
+            return Math.Round(periods.Average() / 24, 1);
         }
     }
 }

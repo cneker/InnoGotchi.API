@@ -47,9 +47,9 @@ namespace Infrastructure.Services
                 hungryDuration -= PetConfiguration.FeedingFrequencyInHours;
                 pet.HungerLevel -= 1;
 
-                feeding = new HungryStateChanges() 
-                { 
-                    PetId = pet.Id, 
+                feeding = new HungryStateChanges()
+                {
+                    PetId = pet.Id,
                     ChangesDate = feeding.ChangesDate.AddHours(PetConfiguration.FeedingFrequencyInHours),
                     HungerState = pet.HungerLevel
                 };
@@ -57,6 +57,7 @@ namespace Infrastructure.Services
 
                 if (pet.HungerLevel == HungerLevel.Dead)
                 {
+                    pet.ThirstyLevel = ThirstyLevel.Dead;
                     pet.DeathDay = feeding.ChangesDate;
                     break;
                 }
@@ -66,9 +67,9 @@ namespace Infrastructure.Services
                 thirstyDuration -= PetConfiguration.DrinkingFrequencyInHours;
                 pet.ThirstyLevel -= 1;
 
-                drinking = new ThirstyStateChanges() 
-                { 
-                    PetId = pet.Id, 
+                drinking = new ThirstyStateChanges()
+                {
+                    PetId = pet.Id,
                     ChangesDate = drinking.ChangesDate.AddHours(PetConfiguration.DrinkingFrequencyInHours),
                     ThirstyState = pet.ThirstyLevel
                 };
@@ -76,6 +77,7 @@ namespace Infrastructure.Services
 
                 if (pet.ThirstyLevel == ThirstyLevel.Dead)
                 {
+                    pet.HungerLevel = HungerLevel.Dead;
                     if (pet.DeathDay > drinking.ChangesDate || pet.DeathDay == null)
                         pet.DeathDay = drinking.ChangesDate;
                     break;
@@ -90,7 +92,7 @@ namespace Infrastructure.Services
 
             return pet;
         }
-        
+
         public int CalculateAge(Pet pet) =>
             pet.DeathDay != null ?
                 (pet.DeathDay - pet.Birthday).Value.Days / PetConfiguration.OnePetAgeInDays :
@@ -98,9 +100,9 @@ namespace Infrastructure.Services
 
         public async Task<double> CalculateHappynessDayCount(Guid petId)
         {
-            var hungryRecords = 
+            var hungryRecords =
                 (await _repositoryManager.FeedingHistoryRepository.GetHistoryByPetIdAsync(petId, false)).ToList();
-            var thirstyRecords = 
+            var thirstyRecords =
                 (await _repositoryManager.DrinkingHistoryRepository.GetHistoryByPetIdAsync(petId, false)).ToList();
             hungryRecords.Add(new HungryStateChanges { PetId = petId, ChangesDate = DateTime.Now });
             thirstyRecords.Add(new ThirstyStateChanges { PetId = petId, ChangesDate = DateTime.Now });
@@ -115,7 +117,7 @@ namespace Infrastructure.Services
             bool emptyH = true; bool emptyT = true;
             bool nextT = true, nextH = true;
 
-            while(true)
+            while (true)
             {
                 if (nextH)
                 {
@@ -169,14 +171,14 @@ namespace Infrastructure.Services
                     break;
 
 
-                if(startH < endT && startT < endH)
+                if (startH < endT && startT < endH)
                 {
                     var temp_start = startH > startT ? startH : startT;
                     var temp_end = endH > endT ? endT : endH;
 
                     count += (temp_end - temp_start).TotalHours;
 
-                    if(temp_end == endT && temp_end == endH)
+                    if (temp_end == endT && temp_end == endH)
                     {
                         break;
                     }
@@ -198,7 +200,7 @@ namespace Infrastructure.Services
                 }
                 else
                 {
-                    if(startH > endT)
+                    if (startH > endT)
                     {
                         nextH = false;
                         nextT = true;

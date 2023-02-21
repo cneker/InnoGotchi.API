@@ -48,7 +48,7 @@ namespace InnoGotchi.API.Controllers
         {
             var user = await _userService.CreateUserAsync(userDto);
             _logger.LogInformation("User was created");
-            return CreatedAtRoute("SignIn", new { Controller = "Authentication" }, user.Email);
+            return CreatedAtRoute("SignIn", new { Controller = "Authentication" }, user);
         }
 
         [HttpPut("{id}")]
