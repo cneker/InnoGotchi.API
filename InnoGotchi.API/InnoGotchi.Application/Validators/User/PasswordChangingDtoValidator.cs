@@ -9,10 +9,12 @@ namespace InnoGotchi.Application.Validators.User
         {
             RuleFor(p => p.NewPassword)
                 .NotEmpty()
+                .Length(5, 30)
                 .Equal(p => p.ConfirmedPassword)
                 .NotEqual(p => p.OldPassword);
             RuleFor(p => p.OldPassword)
-                .NotEmpty();
+                .NotEmpty()
+                .Length(5, 30);
         }
     }
 }
