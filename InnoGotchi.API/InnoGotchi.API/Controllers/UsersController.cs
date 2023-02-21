@@ -26,14 +26,6 @@ namespace InnoGotchi.API.Controllers
             return Ok(usersDto);
         }
 
-        [HttpGet("{id}/layout"), Authorize]
-        public async Task<IActionResult> GetUserForLayout(Guid id)
-        {
-            var userDto = await _userService.GetUserInfoForLayoutByIdAsync(id);
-            _logger.LogInformation("Send user for layout");
-            return Ok(userDto);
-        }
-
         [HttpGet("{id}", Name = "GetUser"), Authorize]
         public async Task<IActionResult> GetUser(Guid id)
         {

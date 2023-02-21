@@ -19,7 +19,6 @@ namespace InnoGotchi.Application.Mapper
                 .ForMember(u => u.FriendsFarms, opt => opt.Ignore())
                 .ForMember(u => u.Role, opt => opt.Ignore());
             CreateMap<User, UserInfoDto>();
-            CreateMap<User, UserInfoForLayoutDto>();
             CreateMap<UserInfoForUpdateDto, User>()
                 .ForMember(u => u.Id, opt => opt.Ignore())
                 .ForMember(u => u.Email, opt => opt.Ignore())

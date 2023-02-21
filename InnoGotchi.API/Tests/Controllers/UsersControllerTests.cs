@@ -143,29 +143,6 @@ namespace Tests.Controllers
         }
 
         [Fact]
-        public async Task GetUserForLayout_ReturnsOkResulnAndUserForLayoutDto()
-        {
-            //Arrange
-            var id = _fixture.Create<Guid>();
-            var userInfoForLayout = _fixture.Build<UserInfoForLayoutDto>()
-                .With(u => u.Id, id)
-                .Create();
-            var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.GetUserInfoForLayoutByIdAsync(id))
-                .Returns(Task.FromResult(userInfoForLayout));
-
-            var controller = new UsersController(userServiceMock.Object, _loggerMock);
-
-            //Act
-            var result = await controller.GetUserForLayout(id);
-
-            //Assert
-            var okResult = result.Should().BeOfType<OkObjectResult>();
-            (okResult.Which.Value as UserInfoForLayoutDto).Should().NotBeNull()
-                .And.Match<UserInfoForLayoutDto>(u => u.Id == id);
-        }
-
-        [Fact]
         public async Task UpdateAvatar_ReturnsNoContentResult()
         {
             //Arrange

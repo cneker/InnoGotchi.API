@@ -309,52 +309,6 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task GetUserInfoForLayoutByIdAsync_ReturnsUserInfoForLayoutDto_WhenPassedIdIsValid()
-        {
-            //Arrange
-            var id = _fixture.Create<Guid>();
-            var user = _fixture.Build<User>()
-                .With(u => u.Id, id)
-                .Without(u => u.UserFarm)
-                .Without(u => u.FriendsFarms)
-                .Create();
-            var userInfoForLayout = _fixture.Create<UserInfoForLayoutDto>();
-            var repositoryMock = new Mock<IRepositoryManager>();
-            repositoryMock.Setup(r => r.UserRepository.GetUserByIdAsync(id, false))
-                .Returns(Task.FromResult(user));
-            var mapperMock = new Mock<IMapper>();
-            mapperMock.Setup(m => m.Map<UserInfoForLayoutDto>(user))
-                .Returns(userInfoForLayout);
-
-            var service = new UserService(repositoryMock.Object, null, mapperMock.Object, null);
-
-            //Act
-            var result = await service.GetUserInfoForLayoutByIdAsync(id);
-
-            //Assert
-            mapperMock.Verify(m => m.Map<UserInfoForLayoutDto>(user), Times.Once());
-            result.Should().BeEquivalentTo(userInfoForLayout);
-        }
-
-        [Fact]
-        public async Task GetUserInfoForLayoutByIdAsync_ThrowingNotFoundException_WhenPassedIdIsInvalid()
-        {
-            //Arrange
-            var id = _fixture.Create<Guid>();
-            var repositoryMock = new Mock<IRepositoryManager>();
-            repositoryMock.Setup(r => r.UserRepository.GetUserByIdAsync(id, false))
-                .Returns(Task.FromResult<User>(null));
-
-            var service = new UserService(repositoryMock.Object, null, null, null);
-
-            //Act
-            Func<Task> result = async () => await service.GetUserInfoForLayoutByIdAsync(id);
-
-            //Assert
-            await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
-        }
-
-        [Fact]
         public async Task UpdateAvatarAsync_UpdatedUserAvatar_WhenPassedIdIsValid()
         {
             //Arrange
@@ -391,6 +345,7 @@ namespace Tests.Services
         {
             //Arrange
             var id = _fixture.Create<Guid>();
+            var avatarDto = _fixture.Create<AvatarChangingDto>();
             var repositoryMock = new Mock<IRepositoryManager>();
             repositoryMock.Setup(r => r.UserRepository.GetUserByIdAsync(id, false))
                 .Returns(Task.FromResult<User>(null));
@@ -398,7 +353,7 @@ namespace Tests.Services
             var service = new UserService(repositoryMock.Object, null, null, null);
 
             //Act
-            Func<Task> result = async () => await service.GetUserInfoForLayoutByIdAsync(id);
+            Func<Task> result = async () => await service.UpdateAvatarAsync(id, avatarDto);
 
             //Assert
             await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
