@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi.API.Controllers
 {
-    [Route("api/users/{id}/farm")]
+    [Route("api/users/{userId}/farm")]
     [ApiController]
     public class FarmsController : ControllerBase
     {
@@ -28,68 +28,73 @@ namespace InnoGotchi.API.Controllers
         }
 
         [HttpGet(Name = "GetFarmOverview"), Authorize]
-        public async Task<IActionResult> GetFarmOverview(Guid id)
+        public async Task<IActionResult> GetFarmOverview(Guid userId)
         {
-            var farmDto = await _farmService.GetFarmOverviewByIdAsync(id);
+            var farmDto = await _farmService.GetFarmOverviewByIdAsync(userId);
             _logger.LogInformation("Send FarmOverview");
             return Ok(farmDto);
         }
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
-        public async Task<IActionResult> CreateFarm(Guid id, [FromBody] FarmForCreationDto farmDto)
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
+        public async Task<IActionResult> CreateFarm(Guid userId, [FromBody] FarmForCreationDto farmDto)
         {
-            var farm = await _farmService.CreateFarmAsync(id, farmDto);
+            var farm = await _farmService.CreateFarmAsync(userId, farmDto);
             _logger.LogInformation("Farm was created");
-            return CreatedAtRoute("GetFarmOverview", new { id }, farm);
+            return CreatedAtRoute("GetFarmOverview", new { userId }, farm);
         }
 
         [HttpGet("{farmId}/detail"), Authorize]
-        public async Task<IActionResult> GetFarmDetails(Guid id, Guid farmId)
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
+        public async Task<IActionResult> GetFarmDetails(Guid userId, Guid farmId)
         {
-            var farmDto = await _farmService.GetFarmDetailsByFarmIdAsync(id, farmId);
+            var farmDto = await _farmService.GetFarmDetailsByFarmIdAsync(userId, farmId);
             _logger.LogInformation("Send FarmDetails");
             return Ok(farmDto);
         }
 
         [HttpGet("{farmId}/statistics"), Authorize]
-        public async Task<IActionResult> GetFarmStatistics(Guid id, Guid farmId)
+        public async Task<IActionResult> GetFarmStatistics(Guid userId, Guid farmId)
         {
-            var farmDto = await _farmService.GetFarmStatisticsByFarmIdAsync(id, farmId);
+            var farmDto = await _farmService.GetFarmStatisticsByFarmIdAsync(userId, farmId);
             _logger.LogInformation("Send FarmStatistics");
             return Ok(farmDto);
         }
 
         [HttpGet("friends"), Authorize]
-        public async Task<IActionResult> GetFriendsFarms(Guid id)
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
+        public async Task<IActionResult> GetFriendsFarms(Guid userId)
         {
-            var friends = await _farmService.GetFriendsFarmsAsync(id);
+            var friends = await _farmService.GetFriendsFarmsAsync(userId);
             _logger.LogInformation("Send friends farms");
             return Ok(friends);
         }
 
         [HttpPost("{farmId}/invite-collaborator"), Authorize]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
-        public async Task<IActionResult> InviteCollaborator(Guid id, Guid farmId, [FromBody] UserForInvitingDto userDto)
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
+        public async Task<IActionResult> InviteCollaborator(Guid userId, Guid farmId, [FromBody] UserForInvitingDto userDto)
         {
-            await _farmService.InviteFriendAsync(id, farmId, userDto);
+            await _farmService.InviteFriendAsync(userId, farmId, userDto);
             _logger.LogInformation("Collaborator was invited");
             return NoContent();
         }
 
         [HttpPut("{farmId}")]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
-        public async Task<IActionResult> UpdateFarm(Guid id, Guid farmId, [FromBody] FarmForUpdateDto farmDto)
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
+        public async Task<IActionResult> UpdateFarm(Guid userId, Guid farmId, [FromBody] FarmForUpdateDto farmDto)
         {
-            await _farmService.UpdateFarmNameAsync(id, farmId, farmDto);
+            await _farmService.UpdateFarmNameAsync(userId, farmId, farmDto);
             _logger.LogInformation("Farm was updated");
             return NoContent();
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteFarm(Guid id)
+        public async Task<IActionResult> DeleteFarm(Guid userId)
         {
-            await _farmService.DeleteFarmById(id);
+            await _farmService.DeleteFarmById(userId);
             _logger.LogInformation("Farm was deleted");
             return NoContent();
         }

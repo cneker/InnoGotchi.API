@@ -57,8 +57,6 @@ namespace Infrastructure.Services
         public async Task<UserInfoDto> GetUserInfoByIdAsync(Guid id)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, false);
-            if (user == null)
-                throw new NotFoundException("User not found");
 
             var userInfo = _mapper.Map<UserInfoDto>(user);
 
@@ -68,8 +66,6 @@ namespace Infrastructure.Services
         public async Task UpdatePasswordAsync(Guid id, PasswordChangingDto passwordForUpdate)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, true);
-            if (user == null)
-                throw new NotFoundException("User not found");
 
             user.PasswordHash = _authService.CreatePasswordHash(passwordForUpdate.NewPassword);
 
@@ -79,8 +75,6 @@ namespace Infrastructure.Services
         public async Task UpdateUserInfoAsync(Guid id, UserInfoForUpdateDto userForUpdate)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, true);
-            if (user == null)
-                throw new NotFoundException("User not found");
 
             _mapper.Map(userForUpdate, user);
 
@@ -90,8 +84,6 @@ namespace Infrastructure.Services
         public async Task UpdateAvatarAsync(Guid id, AvatarChangingDto avatarDto)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, true);
-            if (user == null)
-                throw new NotFoundException("User not found");
 
             var imagePath = await _avatarService.CreateImageAsync(id, avatarDto);
             _avatarService.DeleteOldImage(user.AvatarPath);

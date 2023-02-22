@@ -26,11 +26,11 @@ namespace InnoGotchi.API.Controllers
             return Ok(usersDto);
         }
 
-        [HttpGet("{id}", Name = "GetUser"), Authorize]
-        [ServiceFilter(typeof(CheckWhetherUserIsOwnerAttribute))]
-        public async Task<IActionResult> GetUser(Guid id)
+        [HttpGet("{userId}", Name = "GetUser"), Authorize]
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
+        public async Task<IActionResult> GetUser(Guid userId)
         {
-            var userDto = await _userService.GetUserInfoByIdAsync(id);
+            var userDto = await _userService.GetUserInfoByIdAsync(userId);
             _logger.LogInformation("Send user");
             return Ok(userDto);
         }
@@ -44,39 +44,39 @@ namespace InnoGotchi.API.Controllers
             return CreatedAtRoute("SignIn", new { Controller = "Authentication" }, user);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{userId}")]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
-        [ServiceFilter(typeof(CheckWhetherUserIsOwnerAttribute))]
-        public async Task<IActionResult> UpdateUserInfo(Guid id, [FromBody] UserInfoForUpdateDto userDto)
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
+        public async Task<IActionResult> UpdateUserInfo(Guid userId, [FromBody] UserInfoForUpdateDto userDto)
         {
-            await _userService.UpdateUserInfoAsync(id, userDto);
+            await _userService.UpdateUserInfoAsync(userId, userDto);
             _logger.LogInformation("User was updated");
             return NoContent();
         }
 
-        [HttpPut("{id}/change-password")]
+        [HttpPut("{userId}/change-password")]
         [ServiceFilter(typeof(ValidationFilterAttribute)), Authorize]
-        [ServiceFilter(typeof(CheckWhetherUserIsOwnerAttribute))]
-        public async Task<IActionResult> ChangeUserPassword(Guid id, [FromBody] PasswordChangingDto passwordDto)
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
+        public async Task<IActionResult> ChangeUserPassword(Guid userId, [FromBody] PasswordChangingDto passwordDto)
         {
-            await _userService.UpdatePasswordAsync(id, passwordDto);
+            await _userService.UpdatePasswordAsync(userId, passwordDto);
             _logger.LogInformation("Password was changed");
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteUser(Guid userId)
         {
-            await _userService.DeleteUserById(id);
+            await _userService.DeleteUserById(userId);
             _logger.LogInformation("User was deleted");
             return NoContent();
         }
 
-        [HttpPut("{id}/update-avatar"), Authorize]
-        [ServiceFilter(typeof(CheckWhetherUserIsOwnerAttribute))]
-        public async Task<IActionResult> UpdateAvatar(Guid id, AvatarChangingDto avatarDto)
+        [HttpPut("{userId}/update-avatar"), Authorize]
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
+        public async Task<IActionResult> UpdateAvatar(Guid userId, AvatarChangingDto avatarDto)
         {
-            await _userService.UpdateAvatarAsync(id, avatarDto);
+            await _userService.UpdateAvatarAsync(userId, avatarDto);
             _logger.LogInformation("Avatar was updated");
             return NoContent();
         }

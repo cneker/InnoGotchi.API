@@ -33,8 +33,6 @@ namespace Infrastructure.Services
         public async Task<FarmOverviewDto> CreateFarmAsync(Guid userId, FarmForCreationDto farmForCreation)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
-            if (user == null)
-                throw new NotFoundException("User not found");
 
             if (user.UserFarm != null)
                 throw new AlreadyExistsException("This user already has a farm");
@@ -53,10 +51,6 @@ namespace Infrastructure.Services
 
         public async Task<FarmDetailsDto> GetFarmDetailsByFarmIdAsync(Guid userId, Guid farmId)
         {
-            var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
-            if (user == null)
-                throw new NotFoundException("User not found");
-
             var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);
             if (farm == null)
                 throw new NotFoundException("Farm not found");
@@ -85,17 +79,12 @@ namespace Infrastructure.Services
 
         public async Task<FarmStatisticsDto> GetFarmStatisticsByFarmIdAsync(Guid userId, Guid farmId)
         {
-            var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
-            if (user == null)
-                throw new NotFoundException("User not found");
-
             var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);
             if (farm == null)
                 throw new NotFoundException("Farm not found");
 
-            if (!_checkUserService.CheckWhetherUserIsCollaborator(farm, userId))
-                if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
-                    throw new AccessDeniedException("You are not the owner or collaborator of this farm");
+            if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
+                throw new AccessDeniedException("You are not the owner of this farm");
 
             await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm);
 
@@ -107,8 +96,6 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<FarmOverviewDto>> GetFriendsFarmsAsync(Guid userId)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(userId, false);
-            if (user == null)
-                throw new NotFoundException("User not found");
 
             var farms = _mapper.Map<IEnumerable<FarmOverviewDto>>(user.FriendsFarms);
 
@@ -126,6 +113,9 @@ namespace Infrastructure.Services
             if (farm == null)
                 throw new NotFoundException("Farm not found");
 
+            if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
+                throw new AccessDeniedException("You are not the owner of this farm");
+
             if (farm.Collaborators.SingleOrDefault(u => u.Id == friend.Id) != null)
                 throw new AlreadyExistsException("This user is already your friend");
 
@@ -141,6 +131,9 @@ namespace Infrastructure.Services
             var farm = await _repositoryManager.FarmRepository.GetFarmByIdAsync(farmId, true);
             if (farm == null)
                 throw new NotFoundException("Farm not found");
+
+            if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
+                throw new AccessDeniedException("You are not the owner of this farm");
 
             if (farm.Name == farmForUpdate.Name)
                 throw new IncorrectRequestException("This name has alredy registered");
