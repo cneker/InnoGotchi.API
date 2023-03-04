@@ -10,22 +10,23 @@ namespace Tests.Services
 {
     public class AuthenticationServiceTests
     {
+        private readonly string _validPasswordHash;
         private readonly Fixture _fixture;
         public AuthenticationServiceTests()
         {
             _fixture = new Fixture();
+            _validPasswordHash = "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B6bhUnj48FWcEh/a";
         }
 
         [Fact]
-        public void VerifyPasswordHash_ReturnsTrue_WhenPasswordAndItsHashAreValid()
+        public void VerifyPasswordHash_WhenPasswordAndItsHashAreValid_ReturnsTrue()
         {
             //Arrange
-            var passwodHash = "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B6bhUnj48FWcEh/a";
             var password = "qwerty";
             var service = new AuthenticationService(null, null);
 
             //Act
-            var result = service.VerifyPasswordHash(password, passwodHash);
+            var result = service.VerifyPasswordHash(password, _validPasswordHash);
             //Assert
             result.Should().BeTrue();
         }
@@ -33,7 +34,7 @@ namespace Tests.Services
         [Theory]
         [InlineData("qwerty123", "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B6bhUnj48FWcEh/a")]
         [InlineData("qwerty", "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B7bhUnj48FWcEh/a")]
-        public void VerifyPasswordHash_ReturnsFalse_WhenPasswordOrItsHashAreInvalid(string password, string passwodHash)
+        public void VerifyPasswordHash_WhenPasswordOrItsHashAreInvalid_ReturnsFalse(string password, string passwodHash)
         {
             //Arrange
             var service = new AuthenticationService(null, null);
@@ -59,14 +60,14 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task SignInAsync_ReturnsJWT_WhenUserEmailAndPasswordAreValid()
+        public async Task SignInAsync_WhenUserEmailAndPasswordAreValid_ReturnsJWT()
         {
             //Arrange
             var userDto = _fixture.Build<UserForAuthenticationDto>()
                 .With(u => u.Password, "qwerty")
                 .Create();
             var user = _fixture.Build<User>()
-                .With(u => u.PasswordHash, "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B6bhUnj48FWcEh/a")
+                .With(u => u.PasswordHash, _validPasswordHash)
                 .Without(u => u.UserFarm)
                 .Without(u => u.FriendsFarms)
                 .Create();
@@ -93,7 +94,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task SignInAsync_ThrowingNotFoundException_WhenUserEmailIsInvalid()
+        public async Task SignInAsync_WhenUserEmailIsInvalid_ThrowingNotFoundException()
         {
             //Arrange
             var userDto = _fixture.Build<UserForAuthenticationDto>()
@@ -114,14 +115,14 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task SignInAsync_ThrowingIncorrectRequestException_WhenUserPasswordIsInvalid()
+        public async Task SignInAsync_WhenUserPasswordIsInvalid_ThrowingIncorrectRequestException()
         {
             //Arrange
             var userDto = _fixture.Build<UserForAuthenticationDto>()
                 .With(u => u.Password, "qwerty123")
                 .Create();
             var user = _fixture.Build<User>()
-                .With(u => u.PasswordHash, "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B6bhUnj48FWcEh/a")
+                .With(u => u.PasswordHash, _validPasswordHash)
                 .Without(u => u.UserFarm)
                 .Without(u => u.FriendsFarms)
                 .Create();

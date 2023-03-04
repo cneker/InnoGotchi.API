@@ -30,7 +30,7 @@ namespace Tests.Repositories
         }
 
         [Fact]
-        public async Task GetUserByIdAsync_ReturnsUser_WhenUserExistsAndPassedIdIsValid()
+        public async Task GetUserByIdAsync_WhenUserExistsAndPassedIdIsValid_ReturnsUser()
         {
             //Arrange
             var userId = Guid.Parse("8cd6c906-81c5-4717-8428-bfebe34d0f09");
@@ -47,7 +47,7 @@ namespace Tests.Repositories
         }
 
         [Fact]
-        public async Task GetUserByIdAsync_ReturnsNull_WhenPassedIdIsInvalid()
+        public async Task GetUserByIdAsync_WhenPassedIdIsInvalid_ReturnsNull()
         {
             //Arrange
             var userId = _fixture.Create<Guid>();
@@ -60,7 +60,7 @@ namespace Tests.Repositories
         }
 
         [Fact]
-        public async Task GetUserByEmailAsync_ReturnsUser_WhenUserExistsAndPassedEmailIsValid()
+        public async Task GetUserByEmailAsync_WhenUserExistsAndPassedEmailIsValid_ReturnsUser()
         {
             //Arrange
             var userEmail = "email1@mail.com";
@@ -77,7 +77,7 @@ namespace Tests.Repositories
         }
 
         [Fact]
-        public async Task GetUserByEmailAsync_ReturnsNull_WhenPassedEmailIsInvalid()
+        public async Task GetUserByEmailAsync_WhenPassedEmailIsInvalid_ReturnsNull()
         {
             //Arrange
             var userEmail = _fixture.Create<string>();

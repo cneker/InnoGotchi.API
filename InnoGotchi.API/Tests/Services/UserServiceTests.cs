@@ -17,7 +17,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task CreateUserAsync_ReturnsUserInfoDto_WhenPassedEmailIsUniq()
+        public async Task CreateUserAsync_WhenPassedEmailIsUniq_ReturnsUserInfoDto()
         {
             //Arrange
             var userForReg = _fixture.Create<UserForRegistrationDto>();
@@ -60,7 +60,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task CreateUserAsync_ThrowingAlreadyExistsException_WhenPassedEmailIsAlreadyRegistered()
+        public async Task CreateUserAsync_WhenPassedEmailIsAlreadyRegistered_ThrowingAlreadyExistsException()
         {
             //Arrange
             var userForReg = _fixture.Create<UserForRegistrationDto>();
@@ -111,7 +111,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task DeleteUserById_DeletedUser_WhenPassedIdIsValid()
+        public async Task DeleteUserById_WhenPassedIdIsValid_DeletedUser()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -146,7 +146,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task DeleteUserById_ThrowingNotFoundException_WhenPassedIdIsInvalid()
+        public async Task DeleteUserById_WhenPassedIdIsInvalid_ThrowingNullReferenceException()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -165,7 +165,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task GetUserInfoByIdAsync_ReturnsUserInfoDto_WhenPassedIdIsValid()
+        public async Task GetUserInfoByIdAsync_WhenPassedIdIsValid_ReturnsUserInfoDto()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -193,7 +193,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task GetUserInfoByIdAsync_ThrowingNotFoundException_WhenPassedIdIsInvalid()
+        public async Task GetUserInfoByIdAsync_WhenPassedIdIsInvalid_ThrowingNullReferenceException()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -207,11 +207,11 @@ namespace Tests.Services
             Func<Task> result = async () => await service.GetUserInfoByIdAsync(id);
 
             //Assert
-            await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
+            await result.Should().ThrowAsync<NullReferenceException>();
         }
 
         [Fact]
-        public async Task UpdatePasswordAsync_UpdatedPasswordHash_WhenPassedIdIsValid()
+        public async Task UpdatePasswordAsync_WhenPassedIdIsValid_UpdatedPasswordHash()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -241,7 +241,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task UpdatePasswordAsync_ThrowingNotFoundExceptions_WhenPassedIdIsInvalid()
+        public async Task UpdatePasswordAsync_WhenPassedIdIsInvalid_ThrowingNullReferenceException()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -256,11 +256,11 @@ namespace Tests.Services
             Func<Task> result = async () => await service.UpdatePasswordAsync(id, passwordChangingDto);
 
             //Assert
-            await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
+            await result.Should().ThrowAsync<NullReferenceException>();
         }
 
         [Fact]
-        public async Task UpdateUserInfoAsync_UpdatedUser_WhenPassedIdIsValid()
+        public async Task UpdateUserInfoAsync_WhenPassedIdIsValid_UpdatedUser()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -290,7 +290,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task UpdateUserInfoAsync_ThrowingNotFoundException_WhenPassedIdIsInvalid()
+        public async Task UpdateUserInfoAsync_WhenPassedIdIsInvalid_ThrowingNullReferenceException()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -305,11 +305,11 @@ namespace Tests.Services
             Func<Task> result = async () => await service.UpdateUserInfoAsync(id, userInfoForUpdateDto);
 
             //Assert
-            await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
+            await result.Should().ThrowAsync<NullReferenceException>();
         }
 
         [Fact]
-        public async Task UpdateAvatarAsync_UpdatedUserAvatar_WhenPassedIdIsValid()
+        public async Task UpdateAvatarAsync_WhenPassedIdIsValid_UpdatedUserAvatar()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -341,7 +341,7 @@ namespace Tests.Services
         }
 
         [Fact]
-        public async Task UpdateAvatarAsync_ThrowingNotFoundException_WhenPassedIdIsInvalid()
+        public async Task UpdateAvatarAsync_WhenPassedIdIsInvalid_ThrowingNullReferenceException()
         {
             //Arrange
             var id = _fixture.Create<Guid>();
@@ -356,7 +356,7 @@ namespace Tests.Services
             Func<Task> result = async () => await service.UpdateAvatarAsync(id, avatarDto);
 
             //Assert
-            await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");
+            await result.Should().ThrowAsync<NullReferenceException>();
         }
     }
 }

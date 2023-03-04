@@ -15,7 +15,7 @@ namespace Infrastructure.Persistance.Repositories
             await GetAll(trackChanges)
             .Include(p => p.Pets)
             .ToListAsync();
-        //мб лучше по имени, тогда и смысл в нижестоящем методе пропадет
+
         public async Task<Farm> GetFarmByIdAsync(Guid id, bool trackChanges) =>
             await GetByCondition(f => f.Id == id, trackChanges)
             .Include(f => f.Collaborators)
@@ -37,6 +37,5 @@ namespace Infrastructure.Persistance.Repositories
 
         public void DeleteFarm(Farm farm) =>
             Delete(farm);
-
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Tests.Repositories
 {
-    public class TestDatabaseFixture
+    public class TestDatabaseFixture : IDisposable
     {
         private readonly string _connectionString
             = "server=(localdb)\\mssqllocaldb; database=InnoGotchiTests; Integrated Security = true";
@@ -83,6 +83,11 @@ namespace Tests.Repositories
             Context.Farms.RemoveRange(Context.Farms);
             Context.Users.RemoveRange(Context.Users);
             Context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            Context.Dispose();
         }
     }
 }

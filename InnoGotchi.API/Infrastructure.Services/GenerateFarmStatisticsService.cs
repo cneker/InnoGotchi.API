@@ -25,7 +25,7 @@ namespace Infrastructure.Services
             if (pets.Any())
             {
                 farm.AveragePetsAge = Convert.ToInt32(pets.Average(p => _petConditionService.CalculateAge(p)));
-                farm.AveragePetsHappinessDaysCount = Math.Round(pets.Average(p => p.HappynessDayCount) / 24, 1);
+                farm.AveragePetsHappinessDaysCount = Math.Round(pets.Average(p => p.HappinessDayCount) / 24, 1);
             }
             farm.AverageFeedingPeriod = await CalculateAverageFeedingPeriod(farm.Id);
             farm.AverageThirstQuenchingPeriod = await CalculateAverageDrinkingPeriod(farm.Id);
@@ -34,11 +34,12 @@ namespace Infrastructure.Services
 
         private async Task<double> CalculateAverageFeedingPeriod(Guid farmId)
         {
-            var hungryStatesChangesRecords = await _repositoryManager
-                .FeedingHistoryRepository
-                .GetHistoryByFarmIdAsync(farmId, false);
-            var dates = hungryStatesChangesRecords.Where(r => r.IsFeeding).OrderBy(r => r.ChangesDate)
-                .GroupBy(r => r.PetId).Select(g => g.ToArray());
+            var hungryStatesChangesRecords =
+                await _repositoryManager.FeedingHistoryRepository.GetHistoryByFarmIdAsync(farmId, false);
+            var dates = hungryStatesChangesRecords.Where(r => r.IsFeeding)
+                .OrderBy(r => r.ChangesDate)
+                .GroupBy(r => r.PetId)
+                .Select(g => g.ToArray());
             double period = 0.0;
             var periods = new List<double>();
             foreach (var petDates in dates)
@@ -55,12 +56,13 @@ namespace Infrastructure.Services
 
         private async Task<double> CalculateAverageDrinkingPeriod(Guid farmId)
         {
-            var thirstyStatesChangesRecords = await _repositoryManager
-                .DrinkingHistoryRepository
-                .GetHistoryByFarmIdAsync(farmId, false);
+            var thirstyStatesChangesRecords =
+                await _repositoryManager.DrinkingHistoryRepository.GetHistoryByFarmIdAsync(farmId, false);
 
-            var dates = thirstyStatesChangesRecords.Where(r => r.IsDrinking).OrderBy(r => r.ChangesDate)
-                .GroupBy(r => r.PetId).Select(g => g.ToArray());
+            var dates = thirstyStatesChangesRecords.Where(r => r.IsDrinking)
+                .OrderBy(r => r.ChangesDate)
+                .GroupBy(r => r.PetId)
+                .Select(g => g.ToArray());
             double period = 0.0;
             var periods = new List<double>();
             foreach (var petDates in dates)

@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Persistance"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Services", "Infrastructure.Services\Infrastructure.Services.csproj", "{CC2A735E-784D-4B54-8D4A-8CA862BE523C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InnoGotchi.IntegrationTests", "InnoGotchi.IntegrationTests\InnoGotchi.IntegrationTests.csproj", "{93605680-524E-4BDE-B4B9-8693967C399B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93605680-524E-4BDE-B4B9-8693967C399B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93605680-524E-4BDE-B4B9-8693967C399B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93605680-524E-4BDE-B4B9-8693967C399B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93605680-524E-4BDE-B4B9-8693967C399B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

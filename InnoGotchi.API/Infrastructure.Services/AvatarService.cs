@@ -5,6 +5,7 @@ namespace Infrastructure.Services
 {
     public class AvatarService : IAvatarService
     {
+        private const string defaultAvatar = "default.jpg";
         public async Task<string> CreateImageAsync(Guid userId, AvatarChangingDto avatarDto)
         {
             var imageName = $"{userId}-{avatarDto.FileName}";
@@ -19,7 +20,7 @@ namespace Infrastructure.Services
 
         public void DeleteOldImage(string avatarPath)
         {
-            if (avatarPath != "default.jpg")
+            if (avatarPath != defaultAvatar)
             {
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "avatars", avatarPath);
                 File.Delete(path);

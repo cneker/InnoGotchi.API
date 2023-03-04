@@ -20,7 +20,7 @@ namespace Infrastructure.Persistance.Configurations
 
             builder.Property(p => p.Birthday)
                 .HasDefaultValueSql("GETDATE()");
-            builder.Property(p => p.HappynessDayCount)
+            builder.Property(p => p.HappinessDayCount)
                 .HasDefaultValue(0);
             builder.Property(p => p.HungerLevel)
                 .HasDefaultValue(HungerLevel.Normal);

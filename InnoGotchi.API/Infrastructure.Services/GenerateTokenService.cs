@@ -1,4 +1,5 @@
 ﻿using InnoGotchi.Application.Contracts.Services;
+using InnoGotchi.Application.Exceptions;
 using InnoGotchi.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -26,9 +27,13 @@ namespace Infrastructure.Services
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key =
-                Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"));
-            var secret = new SymmetricSecurityKey(key);
+            var key = Environment.GetEnvironmentVariable("SECRET");
+            if (key == null)
+                throw new MissingEnvironmentVariableException("SECRET");
+            var keyInBytes =
+                Encoding.UTF8.GetBytes(key);
+            var secret = new SymmetricSecurityKey(keyInBytes);
+
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
@@ -47,14 +52,17 @@ namespace Infrastructure.Services
             List<Claim> claims)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
+            var issuer = jwtSettings.GetRequiredSection("validIssuer").Value;
+            var audience = jwtSettings.GetRequiredSection("validAudience").Value;
+            var expires = jwtSettings.GetRequiredSection("expires").Value;
 
             var tokenOptions = new JwtSecurityToken
                 (
-                issuer: jwtSettings.GetSection("validIssuer").Value,
-                audience: jwtSettings.GetSection("validAudience").Value,
+                issuer: issuer,
+                audience: audience,
                 claims: claims,
                 expires:
-                    DateTime.Now.AddDays(int.Parse(jwtSettings.GetSection("expires").Value)),
+                    DateTime.Now.AddDays(int.Parse(expires)),
                 signingCredentials: signingCredentials
                 );
 

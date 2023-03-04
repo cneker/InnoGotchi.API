@@ -31,16 +31,32 @@ namespace Infrastructure.Services
             if (!IsPetAlive(pet))
                 return pet;
 
-            var lastHungryUpdate = pet.HungryStateChangesHistory
-                .OrderBy(f => f.ChangesDate).Last();
-            var lastThirstyUpdate = pet.ThirstyStateChangesHistory
-                .OrderBy(d => d.ChangesDate).Last();
+            await UpdateHungryStateAsync(pet);
+            await UpdateThirstyStateAsync(pet);
+
+            if (pet.HungerLevel == HungerLevel.Dead && pet.ThirstyLevel != ThirstyLevel.Dead)
+                pet.ThirstyLevel = ThirstyLevel.Dead;
+            if (pet.ThirstyLevel == ThirstyLevel.Dead && pet.HungerLevel != HungerLevel.Dead)
+                pet.HungerLevel = HungerLevel.Dead;
+
+            await _repositoryManager.SaveAsync();
+
+            pet.HappinessDayCount = await CalculateHappynessDayCount(pet.Id);
+
+            await _repositoryManager.SaveAsync();
+
+            return pet;
+        }
+
+        private async Task UpdateHungryStateAsync(Pet pet)
+        {
+            var lastHungryUpdate = pet.HungryStateChangesHistory.OrderBy(f => f.ChangesDate)
+                .Last();
             var hungryDuration = (DateTime.Now - lastHungryUpdate.ChangesDate).TotalHours;
-            var thirstyDuration = (DateTime.Now - lastThirstyUpdate.ChangesDate).TotalHours;
-            var feeding = new HungryStateChanges();
-            feeding.ChangesDate = lastHungryUpdate.ChangesDate;
-            var drinking = new ThirstyStateChanges();
-            drinking.ChangesDate = lastThirstyUpdate.ChangesDate;
+            var feeding = new HungryStateChanges
+            {
+                ChangesDate = lastHungryUpdate.ChangesDate
+            };
 
             while (hungryDuration >= PetConfiguration.FeedingFrequencyInHours)
             {
@@ -57,11 +73,22 @@ namespace Infrastructure.Services
 
                 if (pet.HungerLevel == HungerLevel.Dead)
                 {
-                    pet.ThirstyLevel = ThirstyLevel.Dead;
                     pet.DeathDay = feeding.ChangesDate;
                     break;
                 }
             }
+        }
+
+        private async Task UpdateThirstyStateAsync(Pet pet)
+        {
+            var lastThirstyUpdate = pet.ThirstyStateChangesHistory.OrderBy(d => d.ChangesDate)
+                .Last();
+            var thirstyDuration = (DateTime.Now - lastThirstyUpdate.ChangesDate).TotalHours;
+            var drinking = new ThirstyStateChanges
+            {
+                ChangesDate = lastThirstyUpdate.ChangesDate
+            };
+
             while (thirstyDuration >= PetConfiguration.DrinkingFrequencyInHours)
             {
                 thirstyDuration -= PetConfiguration.DrinkingFrequencyInHours;
@@ -77,20 +104,11 @@ namespace Infrastructure.Services
 
                 if (pet.ThirstyLevel == ThirstyLevel.Dead)
                 {
-                    pet.HungerLevel = HungerLevel.Dead;
                     if (pet.DeathDay > drinking.ChangesDate || pet.DeathDay == null)
                         pet.DeathDay = drinking.ChangesDate;
                     break;
                 }
             }
-
-            await _repositoryManager.SaveAsync();
-
-            pet.HappynessDayCount = await CalculateHappynessDayCount(pet.Id);
-
-            await _repositoryManager.SaveAsync();
-
-            return pet;
         }
 
         public int CalculateAge(Pet pet) =>
@@ -107,69 +125,34 @@ namespace Infrastructure.Services
             hungryRecords.Add(new HungryStateChanges { PetId = petId, ChangesDate = DateTime.Now });
             thirstyRecords.Add(new ThirstyStateChanges { PetId = petId, ChangesDate = DateTime.Now });
 
-            var startH = DateTime.Now; var endH = DateTime.Now;
-            var startT = DateTime.Now; var endT = DateTime.Now;
+            DateTime startH = DateTime.Now, endH = DateTime.Now;
+            DateTime startT = DateTime.Now, endT = DateTime.Now;
 
             int i = 0, j = 0;
 
             var count = 0.0;
 
-            bool emptyH = true; bool emptyT = true;
+            bool emptyH = true, emptyT = true;
             bool nextT = true, nextH = true;
 
             while (true)
             {
                 if (nextH)
                 {
-                    for (; i < hungryRecords.Count(); i++)
-                    {
-                        if (hungryRecords[i].HungerState >= HungerLevel.Normal)
-                        {
-                            startH = hungryRecords[i].ChangesDate;
-                            i++;
-                            emptyH = false;
-                            break;
-                        }
-                    }
+                    CalculateStartHungryHappyPeriod(hungryRecords, ref i, ref emptyH, ref startH);
 
-                    for (; i < hungryRecords.Count(); i++)
-                    {
-                        if (hungryRecords[i].HungerState < HungerLevel.Normal)
-                        {
-                            endH = hungryRecords[i].ChangesDate;
-                            i++;
-                            break;
-                        }
-                    }
+                    CalculateEndHungryHappyPeriod(hungryRecords, ref i, ref endH);
                 }
 
                 if (nextT)
                 {
-                    for (; j < thirstyRecords.Count(); j++)
-                    {
-                        if (thirstyRecords[j].ThirstyState >= ThirstyLevel.Normal)
-                        {
-                            startT = thirstyRecords[j].ChangesDate;
-                            j++;
-                            emptyT = false;
-                            break;
-                        }
-                    }
+                    CalculateStartThirstyHappyPeriod(thirstyRecords, ref j, ref emptyT, ref startT);
 
-                    for (; j < thirstyRecords.Count(); j++)
-                    {
-                        if (thirstyRecords[j].ThirstyState < ThirstyLevel.Normal)
-                        {
-                            endT = thirstyRecords[j].ChangesDate;
-                            j++;
-                            break;
-                        }
-                    }
+                    CalculateEndThirstyHappyPeriod(thirstyRecords, ref j, ref endT);
                 }
 
                 if (emptyH == true || emptyT == true)
                     break;
-
 
                 if (startH < endT && startT < endH)
                 {
@@ -179,9 +162,7 @@ namespace Infrastructure.Services
                     count += (temp_end - temp_start).TotalHours;
 
                     if (temp_end == endT && temp_end == endH)
-                    {
                         break;
-                    }
 
                     if (temp_end == endT)
                     {
@@ -200,19 +181,65 @@ namespace Infrastructure.Services
                 }
                 else
                 {
-                    if (startH > endT)
-                    {
-                        nextH = false;
-                        nextT = true;
-                    }
-                    else
-                    {
-                        nextT = false;
-                        nextH = true;
-                    }
+                    nextH = startH < endT;
+                    nextT = startH > endT;
                 }
             }
             return Math.Round(count / 24, 1);
+        }
+
+        private void CalculateStartHungryHappyPeriod(List<HungryStateChanges> hungryRecords, ref int i, ref bool emptyH, ref DateTime startH)
+        {
+            foreach (var rec in hungryRecords.Skip(i))
+            {
+                if (rec.HungerState >= HungerLevel.Normal)
+                {
+                    i++;
+                    emptyH = false;
+                    startH = rec.ChangesDate;
+                    break;
+                }
+            }
+        }
+
+        private void CalculateEndHungryHappyPeriod(List<HungryStateChanges> hungryRecords, ref int i, ref DateTime endH)
+        {
+            foreach (var rec in hungryRecords.Skip(i))
+            {
+                if (rec.HungerState < HungerLevel.Normal)
+                {
+                    i++;
+                    endH = rec.ChangesDate;
+                    break;
+                }
+            }
+        }
+
+        private void CalculateStartThirstyHappyPeriod(List<ThirstyStateChanges> thirstyRecords, ref int j, ref bool emptyT, ref DateTime startT)
+        {
+            foreach (var rec in thirstyRecords.Skip(j))
+            {
+                if (rec.ThirstyState >= ThirstyLevel.Normal)
+                {
+                    startT = rec.ChangesDate;
+                    j++;
+                    emptyT = false;
+                    break;
+                }
+            }
+        }
+
+        private void CalculateEndThirstyHappyPeriod(List<ThirstyStateChanges> thirstyRecords, ref int j, ref DateTime endT)
+        {
+            foreach (var rec in thirstyRecords.Skip(j))
+            {
+                if (rec.ThirstyState < ThirstyLevel.Normal)
+                {
+                    endT = rec.ChangesDate;
+                    j++;
+                    break;
+                }
+            }
         }
     }
 }

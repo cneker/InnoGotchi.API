@@ -23,7 +23,8 @@ namespace Infrastructure.Persistance.Repositories
             .ToListAsync();
 
         public async Task<HungryStateChanges> GetLastFedByPetIdAsync(Guid petId, bool trackChanges) =>
-            await GetByCondition(r => r.PetId == petId, trackChanges).LastOrDefaultAsync();
+            await GetByCondition(r => r.PetId == petId, trackChanges)
+            .LastOrDefaultAsync();
 
         public async Task CreateRecordAsync(HungryStateChanges record) =>
             await Create(record);

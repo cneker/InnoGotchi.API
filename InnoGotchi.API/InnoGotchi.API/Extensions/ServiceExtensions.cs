@@ -5,12 +5,14 @@ using Infrastructure.Services;
 using InnoGotchi.API.Filters.ActionFilters;
 using InnoGotchi.Application.Contracts.Repositories;
 using InnoGotchi.Application.Contracts.Services;
+using InnoGotchi.Application.Exceptions;
 using InnoGotchi.Application.Mapper;
 using InnoGotchi.Domain.Enums;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
 
 namespace InnoGotchi.API.Extensions
@@ -47,14 +49,17 @@ namespace InnoGotchi.API.Extensions
 
         public static void ConfigurActionFilters(this IServiceCollection services)
         {
-            services.AddScoped<ValidationFilterAttribute>();
             services.AddScoped<CheckUserIdAttribute>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
-            var jwtSettings = configuration.GetSection("JwtSettings");
+            var jwtSettings = configuration.GetRequiredSection("JwtSettings");
+            var validIssuer = jwtSettings.GetRequiredSection("validIssuer").Value;
+            var validAudience = jwtSettings.GetRequiredSection("validAudience").Value;
             var key = Environment.GetEnvironmentVariable("SECRET");
+            if (key == null)
+                throw new MissingEnvironmentVariableException("SECRET");
 
             services.AddAuthentication(opt =>
             {
@@ -69,8 +74,8 @@ namespace InnoGotchi.API.Extensions
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
 
-                    ValidIssuer = jwtSettings.GetSection("validIssuer").Value,
-                    ValidAudience = jwtSettings.GetSection("validAudience").Value,
+                    ValidIssuer = validIssuer,
+                    ValidAudience = validAudience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
                 };
             });
@@ -100,6 +105,10 @@ namespace InnoGotchi.API.Extensions
                         Url = new Uri("https://www.linkedin.com/in/stas-kotashevich-6504451b6")
                     }
                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                s.IncludeXmlComments(xmlPath);
 
                 s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

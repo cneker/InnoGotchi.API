@@ -11,7 +11,7 @@ namespace InnoGotchi.API.Filters.ActionFilters
             var routeId = context.RouteData.Values["userId"] as string;
             if (claimValue != routeId)
             {
-                throw new AccessDeniedException("You cannot see other user profiles");
+                throw new AccessDeniedException("You are not the owner of this account");
             }
 
             await next();
