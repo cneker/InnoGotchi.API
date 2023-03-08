@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.API", "InnoGotchi.API\InnoGotchi.API.csproj", "{24577B3E-4264-46EB-9B7E-EFA242434A12}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.Domain", "InnoGotchi.Domain\InnoGotchi.Domain.csproj", "{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.Application", "InnoGotchi.Application\InnoGotchi.Application.csproj", "{CD00DE17-CB7A-4C2C-A18D-E3846CDA22C0}"
@@ -15,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Services", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{436F8C55-BE6F-4809-AB00-73CFD13E8CE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InnoGotchi.IntegrationTests", "InnoGotchi.IntegrationTests\InnoGotchi.IntegrationTests.csproj", "{93605680-524E-4BDE-B4B9-8693967C399B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.IntegrationTests", "InnoGotchi.IntegrationTests\InnoGotchi.IntegrationTests.csproj", "{93605680-524E-4BDE-B4B9-8693967C399B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchi.API", "InnoGotchi.API\InnoGotchi.API.csproj", "{AC9C84F1-71CF-425C-9824-8C8A8043DEF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{24577B3E-4264-46EB-9B7E-EFA242434A12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{24577B3E-4264-46EB-9B7E-EFA242434A12}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{24577B3E-4264-46EB-9B7E-EFA242434A12}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{24577B3E-4264-46EB-9B7E-EFA242434A12}.Release|Any CPU.Build.0 = Release|Any CPU
 		{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{518C7432-9BE1-4EC6-A7A3-2F4B46FE0159}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +47,10 @@ Global
 		{93605680-524E-4BDE-B4B9-8693967C399B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93605680-524E-4BDE-B4B9-8693967C399B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93605680-524E-4BDE-B4B9-8693967C399B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC9C84F1-71CF-425C-9824-8C8A8043DEF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC9C84F1-71CF-425C-9824-8C8A8043DEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC9C84F1-71CF-425C-9824-8C8A8043DEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC9C84F1-71CF-425C-9824-8C8A8043DEF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

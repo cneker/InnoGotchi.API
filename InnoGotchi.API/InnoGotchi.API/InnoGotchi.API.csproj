@@ -39,4 +39,10 @@
     <Folder Include="wwwroot\images\avatars\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\images\avatars\default.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
