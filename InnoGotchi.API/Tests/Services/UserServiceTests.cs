@@ -229,6 +229,8 @@ namespace Tests.Services
             var authMock = new Mock<IAuthenticationService>();
             authMock.Setup(a => a.CreatePasswordHash(passwordChangingDto.NewPassword))
                 .Returns(_fixture.Create<string>());
+            authMock.Setup(a => a.VerifyPasswordHash(passwordChangingDto.OldPassword, user.PasswordHash))
+                .Returns(true);
 
             var service = new UserService(repositorMock.Object, authMock.Object, null, null);
 
