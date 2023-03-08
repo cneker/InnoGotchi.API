@@ -14,7 +14,6 @@ namespace Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly IAvatarService _avatarService;
 
-
         public UserService(IRepositoryManager repositoryManager,
             IAuthenticationService authenticationService, IMapper mapper, IAvatarService avatarService)
         {
@@ -66,6 +65,9 @@ namespace Infrastructure.Services
         public async Task UpdatePasswordAsync(Guid id, PasswordChangingDto passwordForUpdate)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, true);
+
+            if (!_authService.VerifyPasswordHash(passwordForUpdate.OldPassword, user.PasswordHash))
+                throw new IncorrectRequestException("Old password is invalid");
 
             user.PasswordHash = _authService.CreatePasswordHash(passwordForUpdate.NewPassword);
 
