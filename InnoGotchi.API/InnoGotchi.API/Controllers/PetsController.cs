@@ -50,10 +50,12 @@ namespace InnoGotchi.API.Controllers
         /// <response code="200">Returns an existing pet item</response>
         /// <responce code="404">If the pet Id or the farm Id are invalid</responce>
         /// <response code="403">If the user isn't the owner or the collaborator of the farm or if you try to make an action as another user</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpGet("{petId}", Name = "GetPet"), Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute))]
         public async Task<IActionResult> GetPet(Guid userId, Guid farmId, Guid petId)
         {
@@ -73,11 +75,13 @@ namespace InnoGotchi.API.Controllers
         /// <responce code="404">If the farm Id is invalid</responce>
         /// <response code="403">If the user isn't the owner of the farm or if you try to make an action as another user</response>
         /// <response code="400">If passed pet name has alredy registered</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute)), Authorize]
         public async Task<IActionResult> CreatePet(Guid userId, Guid farmId, [FromBody] PetForCreationDto petDto)
         {
@@ -98,11 +102,13 @@ namespace InnoGotchi.API.Controllers
         /// <responce code="404">If the farm Id or the pet Id are invalid</responce>
         /// <response code="403">If the user isn't the owner of the farm or if you try to make an action as another user</response>
         /// <response code="400">If passed pet name has alredy registered</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPut("{petId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute)), Authorize]
         public async Task<IActionResult> UpdatePetName(Guid userId, Guid farmId, Guid petId, [FromBody] PetForUpdateDto petDto)
         {
@@ -122,11 +128,13 @@ namespace InnoGotchi.API.Controllers
         /// <responce code="404">If the farm Id or the pet Id are invalid</responce>
         /// <response code="403">If the user isn't the owner or the collaborator of the farm or if you try to make an action as another user</response>
         /// <response code="423">If the pet is dead</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPut("{petId}/feed"), Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status423Locked)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute))]
         public async Task<IActionResult> FeedThePet(Guid userId, Guid farmId, Guid petId)
         {
@@ -146,11 +154,13 @@ namespace InnoGotchi.API.Controllers
         /// <responce code="404">If the farm Id or the pet Id are invalid</responce>
         /// <response code="403">If the user isn't the owner or the collaborator of the farm or if you try to make an action as another user</response>
         /// <response code="423">If the pet is dead</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPut("{petId}/give-a-drink"), Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status423Locked)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute))]
         public async Task<IActionResult> GiveADrinkToThePet(Guid userId, Guid farmId, Guid petId)
         {

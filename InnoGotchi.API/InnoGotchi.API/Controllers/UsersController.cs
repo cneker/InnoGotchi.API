@@ -41,9 +41,11 @@ namespace InnoGotchi.API.Controllers
         /// <returns>An existing user item</returns>
         /// <response code="200">Returns an existing user item</response>
         /// <response code="403">If you try to make an action as another user</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpGet("{userId}", Name = "GetUser"), Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute))]
         public async Task<IActionResult> GetUser(Guid userId)
         {
@@ -77,9 +79,13 @@ namespace InnoGotchi.API.Controllers
         /// <returns>Nothing</returns>
         /// <response code="204">If a user is successfully updated</response>
         /// <response code="403">If you try to make an action as another user</response>
+        /// <response code="400">If passed model is invalid</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPut("{userId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute)), Authorize]
         public async Task<IActionResult> UpdateUserInfo(Guid userId, [FromBody] UserInfoForUpdateDto userDto)
         {
@@ -96,9 +102,13 @@ namespace InnoGotchi.API.Controllers
         /// <returns>Nothing</returns>
         /// <response code="204">If a password is successfully changed</response>
         /// <response code="403">If you try to make an action as another user</response>
+        /// <response code="400">If passed model is invalid</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPut("{userId}/change-password")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute)), Authorize]
         public async Task<IActionResult> ChangeUserPassword(Guid userId, [FromBody] PasswordChangingDto passwordDto)
         {
@@ -132,9 +142,14 @@ namespace InnoGotchi.API.Controllers
         /// <returns>Nothing</returns>
         /// <response code="204">If an avatar is successfully updated</response>
         /// <response code="403">If you try to make an action as another user</response>
+        /// <response code="400">If passed model is invalid</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPut("{userId}/update-avatar"), Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ServiceFilter(typeof(CheckUserIdAttribute))]
         public async Task<IActionResult> UpdateAvatar(Guid userId, AvatarChangingDto avatarDto)
         {
             await _userService.UpdateAvatarAsync(userId, avatarDto);

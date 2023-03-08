@@ -42,9 +42,11 @@ namespace InnoGotchi.API.Controllers
         /// <returns>An existing farm item</returns>
         /// <response code="200">Returns an existing farm item</response>
         /// <response code="404">If user doesn't have a farm</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpGet(Name = "GetFarmOverview"), Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetFarmOverview(Guid userId)
         {
             var farmDto = await _farmService.GetFarmOverviewByIdAsync(userId);
@@ -61,10 +63,12 @@ namespace InnoGotchi.API.Controllers
         /// <response code="201">Returns the newly created farm</response>
         /// <response code="403">If you try to make an action as another user</response>
         /// <response code="400">If user already has a farm or passed farm name has alredy registered</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute)), Authorize]
         public async Task<IActionResult> CreateFarm(Guid userId, [FromBody] FarmForCreationDto farmDto)
         {
@@ -82,10 +86,12 @@ namespace InnoGotchi.API.Controllers
         /// <response code="200">Returns detailed information about the farm</response>
         /// <responce code="404">If the farm Id is invalid or the farm doesn't exist</responce>
         /// <response code="403">If the user isn't the owner or the collaborator of the farm or if you try to make an action as another user</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpGet("{farmId}/detail"), Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute))]
         public async Task<IActionResult> GetFarmDetails(Guid userId, Guid farmId)
         {
@@ -103,10 +109,12 @@ namespace InnoGotchi.API.Controllers
         /// <response code="200">Returns the statistics about the farm</response>
         /// <responce code="404">If the farm Id is invalid or the farm doesn't exist</responce>
         /// <response code="403">If the user isn't the owner of the farm or if you try to make an action as another user</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpGet("{farmId}/statistics"), Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute))]
         public async Task<IActionResult> GetFarmStatistics(Guid userId, Guid farmId)
         {
@@ -122,9 +130,11 @@ namespace InnoGotchi.API.Controllers
         /// <returns>A list of users</returns>
         /// <response code="200">Returns a list of friends of the farm</response>
         /// <response code="403">If you try to make an action as another user</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpGet("friends"), Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute))]
         public async Task<IActionResult> GetFriendsFarms(Guid userId)
         {
@@ -144,11 +154,13 @@ namespace InnoGotchi.API.Controllers
         /// <response code="404">If farm Id is invalid</response>
         /// <response code="403">If the user isn't the owner of the farm or if you try to make an action as another user</response>
         /// <response code="400">If the friend is already your friend or you try to invite yourself as a friend</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPost("{farmId}/invite-collaborator"), Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute))]
         public async Task<IActionResult> InviteCollaborator(Guid userId, Guid farmId, [FromBody] UserForInvitingDto userDto)
         {
@@ -168,11 +180,13 @@ namespace InnoGotchi.API.Controllers
         /// <response code="404">If farm Id is invalid</response>
         /// <response code="403">If the user isn't the owner of the farm or if you try to make an action as another user</response>
         /// <response code="400">If this farm name has already registered</response>
+        /// <response code="401">If your jwt is invalid</response>
         [HttpPut("{farmId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ServiceFilter(typeof(CheckUserIdAttribute)), Authorize]
         public async Task<IActionResult> UpdateFarm(Guid userId, Guid farmId, [FromBody] FarmForUpdateDto farmDto)
         {
