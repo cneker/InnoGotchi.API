@@ -32,7 +32,7 @@ namespace Tests.Services
             var repositoryMock = new Mock<IRepositoryManager>();
             repositoryMock.Setup(r => r.UserRepository.GetUserByEmailAsync(It.IsAny<string>(), It.IsAny<bool>()))
                 .Returns(Task.FromResult<User>(null));
-            repositoryMock.Setup(r => r.UserRepository.CreateUser(user))
+            repositoryMock.Setup(r => r.UserRepository.CreateUserAsync(user))
                 .Returns(Task.CompletedTask);
             repositoryMock.Setup(r => r.SaveAsync())
                 .Returns(Task.CompletedTask);
@@ -52,7 +52,7 @@ namespace Tests.Services
             var result = await service.CreateUserAsync(userForReg);
 
             //Assert
-            repositoryMock.Verify(r => r.UserRepository.CreateUser(It.IsAny<User>()), Times.Once);
+            repositoryMock.Verify(r => r.UserRepository.CreateUserAsync(It.IsAny<User>()), Times.Once);
             repositoryMock.Verify(r => r.SaveAsync(), Times.Once);
             mapperMock.Verify(m => m.Map<User>(It.IsAny<UserForRegistrationDto>()), Times.Once);
             authMock.Verify(a => a.CreatePasswordHash(It.IsAny<string>()), Times.Once);

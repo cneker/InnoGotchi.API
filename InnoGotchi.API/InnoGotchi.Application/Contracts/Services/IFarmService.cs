@@ -13,6 +13,6 @@ namespace InnoGotchi.Application.Contracts.Services
         Task<FarmStatisticsDto> GetFarmStatisticsByFarmIdAsync(Guid userId, Guid farmId);
         Task UpdateFarmNameAsync(Guid userId, Guid farmId, FarmForUpdateDto farmForUpdate);
         Task InviteFriendAsync(Guid userId, Guid farmId, UserForInvitingDto userForInviting);
-        Task DeleteFarmById(Guid id);
+        Task DeleteFarmByIdAsync(Guid id);
     }
 }

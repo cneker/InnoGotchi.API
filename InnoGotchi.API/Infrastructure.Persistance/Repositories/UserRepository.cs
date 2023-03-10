@@ -28,8 +28,8 @@ namespace Infrastructure.Persistance.Repositories
             .Include(u => u.FriendsFarms)
             .SingleOrDefaultAsync();
 
-        public async Task CreateUser(User user) =>
-            await Create(user);
+        public async Task CreateUserAsync(User user) =>
+            await CreateAsync(user);
 
         public void DeleteUser(User user) =>
             Delete(user);

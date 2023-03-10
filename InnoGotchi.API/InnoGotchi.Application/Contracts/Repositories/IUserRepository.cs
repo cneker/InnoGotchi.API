@@ -7,7 +7,7 @@ namespace InnoGotchi.Application.Contracts.Repositories
         Task<IEnumerable<User>> GetUsersAsync(bool trackChanges);
         Task<User> GetUserByIdAsync(Guid id, bool trackChanges);
         Task<User> GetUserByEmailAsync(string email, bool trackChanges);
-        Task CreateUser(User user);
+        Task CreateUserAsync(User user);
         void DeleteUser(User user);
     }
 }

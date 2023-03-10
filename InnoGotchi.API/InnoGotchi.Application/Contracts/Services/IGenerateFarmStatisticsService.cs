@@ -4,6 +4,6 @@ namespace InnoGotchi.Application.Contracts.Services
 {
     public interface IGenerateFarmStatisticsService
     {
-        Task<FarmStatisticsDto> GenerateStatistics(FarmStatisticsDto farm);
+        Task<FarmStatisticsDto> GenerateStatisticsAsync(FarmStatisticsDto farm);
     }
 }

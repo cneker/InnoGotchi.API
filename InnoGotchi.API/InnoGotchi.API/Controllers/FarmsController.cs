@@ -207,7 +207,7 @@ namespace InnoGotchi.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteFarm(Guid userId)
         {
-            await _farmService.DeleteFarmById(userId);
+            await _farmService.DeleteFarmByIdAsync(userId);
             _logger.LogInformation("Farm was deleted");
             return NoContent();
         }

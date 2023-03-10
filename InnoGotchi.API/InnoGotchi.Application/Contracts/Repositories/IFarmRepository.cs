@@ -8,7 +8,7 @@ namespace InnoGotchi.Application.Contracts.Repositories
         Task<Farm> GetFarmByIdAsync(Guid id, bool trackChanges);
         Task<Farm> GetFarmByUserIdAsync(Guid userId, bool trackChanges);
         Task<Farm> GetFarmByNameAsync(string name, bool trackChanges);
-        Task CreateFarm(Farm farm);
+        Task CreateFarmAsyncs(Farm farm);
         void DeleteFarm(Farm farm);
     }
 }

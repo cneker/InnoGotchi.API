@@ -41,7 +41,7 @@ namespace Infrastructure.Persistance.Repositories
             .SingleOrDefaultAsync();
 
         public async Task CreatePetAsync(Pet pet) =>
-            await Create(pet);
+            await CreateAsync(pet);
 
         public void DeletePet(Pet pet) =>
             Delete(pet);

@@ -63,7 +63,7 @@ namespace Infrastructure.Services
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
                 throw new NotFoundException("Pet not found");
-            await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
+            await _petConditionService.UpdatePetFeedingAndDrinkingLevelsAsync(pet);
 
             if (!_petConditionService.IsPetAlive(pet))
                 throw new PetIsDeadException("Rest and peace");
@@ -87,7 +87,7 @@ namespace Infrastructure.Services
             var pet = await _repositoryManager.PetRepository.GetPetByIdAsync(id, true);
             if (pet == null)
                 throw new NotFoundException("Pet not found");
-            await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
+            await _petConditionService.UpdatePetFeedingAndDrinkingLevelsAsync(pet);
 
             if (!_petConditionService.IsPetAlive(pet))
                 throw new PetIsDeadException("Rest and peace");
@@ -105,7 +105,7 @@ namespace Infrastructure.Services
             var pets = await _repositoryManager.PetRepository.GetAllPetsAsync(petParameters, true);
 
             foreach (var pet in pets)
-                await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
+                await _petConditionService.UpdatePetFeedingAndDrinkingLevelsAsync(pet);
 
             var petPagingDto = new PetPagingDto
             {
@@ -128,7 +128,7 @@ namespace Infrastructure.Services
             if (pet == null)
                 throw new NotFoundException("Pet not found");
 
-            await _petConditionService.UpdatePetFeedingAndDrinkingLevels(pet);
+            await _petConditionService.UpdatePetFeedingAndDrinkingLevelsAsync(pet);
 
             var petForReturn = _mapper.Map<PetDetailsDto>(pet);
 

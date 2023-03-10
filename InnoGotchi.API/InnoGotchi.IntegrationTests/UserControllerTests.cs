@@ -16,7 +16,7 @@ namespace InnoGotchi.IntegrationTests
         private readonly WebApplicationFixture _webApplicationFixture;
         private readonly IFixture _fixture;
         private readonly AppDbContext _context;
-        private const string _base64Image = "base64string";
+        private const string Base64Image = "base64string";
         public UserControllerTests(WebApplicationFixture applicationFixture)
         {
             _fixture = new Fixture();
@@ -547,7 +547,7 @@ namespace InnoGotchi.IntegrationTests
             AddUsersToDb(user);
             var model = new AvatarChangingDto
             {
-                Base64Image = _base64Image,
+                Base64Image = Base64Image,
                 FileName = "test_image.jpg"
             };
             var jwt = _webApplicationFixture.GenerateToken(user);
@@ -577,7 +577,7 @@ namespace InnoGotchi.IntegrationTests
             AddUsersToDb(user);
             var model = new AvatarChangingDto
             {
-                Base64Image = _base64Image,
+                Base64Image = Base64Image,
                 FileName = "test_image.jpg"
             };
             var invalidJWT = _fixture.Create<string>();
@@ -608,7 +608,7 @@ namespace InnoGotchi.IntegrationTests
             AddUsersToDb(user);
             var model = new AvatarChangingDto
             {
-                Base64Image = _base64Image,
+                Base64Image = Base64Image,
                 FileName = "test_image.jpg"
             };
             var jwt = _webApplicationFixture.GenerateToken(user);
@@ -638,7 +638,7 @@ namespace InnoGotchi.IntegrationTests
             AddUsersToDb(user);
             var model = new AvatarChangingDto
             {
-                Base64Image = _base64Image,
+                Base64Image = Base64Image,
                 FileName = "file"
             };
             var jwt = _webApplicationFixture.GenerateToken(user);

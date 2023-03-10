@@ -10,30 +10,29 @@ namespace Tests.Services
 {
     public class AuthenticationServiceTests
     {
-        private readonly string _validPasswordHash;
+        private const string ValidPasswordHash = "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B6bhUnj48FWcEh/a";
+        private const string ValidPassword = "qwerty";
         private readonly Fixture _fixture;
         public AuthenticationServiceTests()
         {
             _fixture = new Fixture();
-            _validPasswordHash = "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B6bhUnj48FWcEh/a";
         }
 
         [Fact]
         public void VerifyPasswordHash_WhenPasswordAndItsHashAreValid_ReturnsTrue()
         {
             //Arrange
-            var password = "qwerty";
             var service = new AuthenticationService(null, null);
 
             //Act
-            var result = service.VerifyPasswordHash(password, _validPasswordHash);
+            var result = service.VerifyPasswordHash(ValidPassword, ValidPasswordHash);
             //Assert
             result.Should().BeTrue();
         }
 
         [Theory]
-        [InlineData("qwerty123", "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B6bhUnj48FWcEh/a")]
-        [InlineData("qwerty", "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B7bhUnj48FWcEh/a")]
+        [InlineData("qwerty123", ValidPasswordHash)]
+        [InlineData(ValidPassword, "$2b$10$gj7WVHAVH28V5ZNYde0y0.nx7PY7/i1wvNZ91B7bhUnj48FWcEh/a")]
         public void VerifyPasswordHash_WhenPasswordOrItsHashAreInvalid_ReturnsFalse(string password, string passwodHash)
         {
             //Arrange
@@ -64,10 +63,10 @@ namespace Tests.Services
         {
             //Arrange
             var userDto = _fixture.Build<UserForAuthenticationDto>()
-                .With(u => u.Password, "qwerty")
+                .With(u => u.Password, ValidPassword)
                 .Create();
             var user = _fixture.Build<User>()
-                .With(u => u.PasswordHash, _validPasswordHash)
+                .With(u => u.PasswordHash, ValidPasswordHash)
                 .Without(u => u.UserFarm)
                 .Without(u => u.FriendsFarms)
                 .Create();
@@ -98,7 +97,7 @@ namespace Tests.Services
         {
             //Arrange
             var userDto = _fixture.Build<UserForAuthenticationDto>()
-                .With(u => u.Password, "qwerty")
+                .With(u => u.Password, ValidPassword)
                 .Create();
 
             var repMock = new Mock<IRepositoryManager>();
@@ -122,7 +121,7 @@ namespace Tests.Services
                 .With(u => u.Password, "qwerty123")
                 .Create();
             var user = _fixture.Build<User>()
-                .With(u => u.PasswordHash, _validPasswordHash)
+                .With(u => u.PasswordHash, ValidPasswordHash)
                 .Without(u => u.UserFarm)
                 .Without(u => u.FriendsFarms)
                 .Create();

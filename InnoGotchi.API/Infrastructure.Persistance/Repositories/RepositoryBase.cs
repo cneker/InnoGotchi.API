@@ -24,7 +24,7 @@ namespace Infrastructure.Persistance.Repositories
                 _repositoryContext.Set<T>().Where(expression) :
                 _repositoryContext.Set<T>().Where(expression).AsNoTracking();
 
-        public async Task Create(T entity) =>
+        public async Task CreateAsync(T entity) =>
             await _repositoryContext.Set<T>().AddAsync(entity);
 
         public void Delete(T entity) =>

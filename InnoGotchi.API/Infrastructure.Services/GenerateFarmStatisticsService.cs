@@ -16,7 +16,7 @@ namespace Infrastructure.Services
             _petConditionService = petConditionService;
         }
 
-        public async Task<FarmStatisticsDto> GenerateStatistics(FarmStatisticsDto farm)
+        public async Task<FarmStatisticsDto> GenerateStatisticsAsync(FarmStatisticsDto farm)
         {
             var pets = await _repositoryManager.PetRepository.GetPetsByFarmIdAsync(farm.Id, false);
 

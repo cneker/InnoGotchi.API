@@ -100,7 +100,7 @@ namespace Tests.Repositories
             _context.Database.BeginTransaction();
 
             //Act
-            await _repository.CreateUser(user);
+            await _repository.CreateUserAsync(user);
             _context.SaveChanges();
 
             //Assert

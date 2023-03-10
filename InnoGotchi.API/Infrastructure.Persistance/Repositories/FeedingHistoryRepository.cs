@@ -27,7 +27,7 @@ namespace Infrastructure.Persistance.Repositories
             .LastOrDefaultAsync();
 
         public async Task CreateRecordAsync(HungryStateChanges record) =>
-            await Create(record);
+            await CreateAsync(record);
 
         public void DeleteRecord(HungryStateChanges record)
         {

@@ -4,10 +4,10 @@ namespace InnoGotchi.Application.Contracts.Services
 {
     public interface IPetConditionService
     {
-        Task UpdatePetsFeedingAndDrinkingLevelsByFarm(Farm farm);
-        Task<Pet> UpdatePetFeedingAndDrinkingLevels(Pet pet);
+        Task UpdatePetsFeedingAndDrinkingLevelsByFarmAsync(Farm farm);
+        Task<Pet> UpdatePetFeedingAndDrinkingLevelsAsync(Pet pet);
         bool IsPetAlive(Pet pet);
         int CalculateAge(Pet pet);
-        Task<double> CalculateHappynessDayCount(Guid petId);
+        double CalculateHappynessDayCount(Pet pet);
     }
 }

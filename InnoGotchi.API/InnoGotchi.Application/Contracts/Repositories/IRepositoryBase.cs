@@ -7,7 +7,7 @@ namespace InnoGotchi.Application.Contracts.Repositories
         IQueryable<T> GetAll(bool trackChanges);
         IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression,
             bool trackCahnges);
-        Task Create(T entity);
+        Task CreateAsync(T entity);
         void Delete(T entity);
     }
 }

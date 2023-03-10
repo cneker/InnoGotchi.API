@@ -31,7 +31,7 @@ namespace Infrastructure.Services
 
             user = _mapper.Map<User>(userForReg);
             user.PasswordHash = _authService.CreatePasswordHash(userForReg.Password);
-            await _repositoryManager.UserRepository.CreateUser(user);
+            await _repositoryManager.UserRepository.CreateUserAsync(user);
             await _repositoryManager.SaveAsync();
 
             return _mapper.Map<UserInfoDto>(user);

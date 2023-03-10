@@ -32,8 +32,8 @@ namespace Infrastructure.Persistance.Repositories
             await GetByCondition(f => f.Name == name, trackChanges)
             .SingleOrDefaultAsync();
 
-        public async Task CreateFarm(Farm farm) =>
-            await Create(farm);
+        public async Task CreateFarmAsyncs(Farm farm) =>
+            await CreateAsync(farm);
 
         public void DeleteFarm(Farm farm) =>
             Delete(farm);

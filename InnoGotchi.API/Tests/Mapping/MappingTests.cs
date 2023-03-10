@@ -16,7 +16,7 @@ namespace Tests.Mapping
                 .Returns(It.IsAny<bool>());
             serviceMock.Setup(a => a.CalculateAge(It.IsAny<Pet>()))
                 .Returns(It.IsAny<int>());
-            serviceMock.Setup(a => a.UpdatePetsFeedingAndDrinkingLevelsByFarm(It.IsAny<Farm>()))
+            serviceMock.Setup(a => a.UpdatePetsFeedingAndDrinkingLevelsByFarmAsync(It.IsAny<Farm>()))
                 .Returns(Task.CompletedTask);
             var mapper = new MapperConfiguration(cfg =>
             {

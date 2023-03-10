@@ -87,6 +87,7 @@ namespace Tests.Repositories
 
         public void Dispose()
         {
+            Context.Database.EnsureDeleted();
             Context.Dispose();
         }
     }

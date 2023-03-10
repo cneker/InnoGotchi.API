@@ -16,17 +16,17 @@ namespace Infrastructure.Services
         public bool IsPetAlive(Pet pet) =>
             pet.DeathDay == null;
 
-        public async Task UpdatePetsFeedingAndDrinkingLevelsByFarm(Farm farm)
+        public async Task UpdatePetsFeedingAndDrinkingLevelsByFarmAsync(Farm farm)
         {
             var pets = await _repositoryManager.PetRepository.GetPetsByFarmIdAsync(farm.Id, true);
             foreach (var pet in farm.Pets)
             {
-                await UpdatePetFeedingAndDrinkingLevels(pet);
+                await UpdatePetFeedingAndDrinkingLevelsAsync(pet);
             }
             farm.Pets = pets.ToList();
         }
 
-        public async Task<Pet> UpdatePetFeedingAndDrinkingLevels(Pet pet)
+        public async Task<Pet> UpdatePetFeedingAndDrinkingLevelsAsync(Pet pet)
         {
             if (!IsPetAlive(pet))
                 return pet;
@@ -39,9 +39,7 @@ namespace Infrastructure.Services
             if (pet.ThirstyLevel == ThirstyLevel.Dead && pet.HungerLevel != HungerLevel.Dead)
                 pet.HungerLevel = HungerLevel.Dead;
 
-            await _repositoryManager.SaveAsync();
-
-            pet.HappinessDayCount = await CalculateHappynessDayCount(pet.Id);
+            pet.HappinessDayCount = CalculateHappynessDayCount(pet);
 
             await _repositoryManager.SaveAsync();
 
@@ -116,14 +114,13 @@ namespace Infrastructure.Services
                 (pet.DeathDay - pet.Birthday).Value.Days / PetConfiguration.OnePetAgeInDays :
                 (DateTime.Now - pet.Birthday).Days / PetConfiguration.OnePetAgeInDays;
 
-        public async Task<double> CalculateHappynessDayCount(Guid petId)
+        public double CalculateHappynessDayCount(Pet pet)
         {
-            var hungryRecords =
-                (await _repositoryManager.FeedingHistoryRepository.GetHistoryByPetIdAsync(petId, false)).ToList();
-            var thirstyRecords =
-                (await _repositoryManager.DrinkingHistoryRepository.GetHistoryByPetIdAsync(petId, false)).ToList();
-            hungryRecords.Add(new HungryStateChanges { PetId = petId, ChangesDate = DateTime.Now });
-            thirstyRecords.Add(new ThirstyStateChanges { PetId = petId, ChangesDate = DateTime.Now });
+            var hungryRecords = pet.HungryStateChangesHistory.ToList();
+            var thirstyRecords = pet.ThirstyStateChangesHistory.ToList();
+            var changesDate = DateTime.Now;
+            hungryRecords.Add(new HungryStateChanges { PetId = pet.Id, ChangesDate = changesDate });
+            thirstyRecords.Add(new ThirstyStateChanges { PetId = pet.Id, ChangesDate = changesDate });
 
             DateTime startH = DateTime.Now, endH = DateTime.Now;
             DateTime startT = DateTime.Now, endT = DateTime.Now;
@@ -161,7 +158,7 @@ namespace Infrastructure.Services
 
                     count += (temp_end - temp_start).TotalHours;
 
-                    if (temp_end == endT && temp_end == endH)
+                    if (temp_end.Equals(endT) && temp_end == endH)
                         break;
 
                     if (temp_end == endT)

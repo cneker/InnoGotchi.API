@@ -43,7 +43,7 @@ namespace Infrastructure.Services
 
             farm = _mapper.Map<Farm>(farmForCreation);
             farm.UserId = userId;
-            await _repositoryManager.FarmRepository.CreateFarm(farm);
+            await _repositoryManager.FarmRepository.CreateFarmAsyncs(farm);
             await _repositoryManager.SaveAsync();
 
             return _mapper.Map<FarmOverviewDto>(farm);
@@ -59,7 +59,7 @@ namespace Infrastructure.Services
                 if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                     throw new AccessDeniedException("You are not the owner or collaborator of this farm");
 
-            await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm);
+            await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarmAsync(farm);
 
             var farmForReturn = _mapper.Map<FarmDetailsDto>(farm);
 
@@ -86,11 +86,11 @@ namespace Infrastructure.Services
             if (!_checkUserService.CheckWhetherUserIsOwner(farm, userId))
                 throw new AccessDeniedException("You are not the owner of this farm");
 
-            await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarm(farm);
+            await _petConditionService.UpdatePetsFeedingAndDrinkingLevelsByFarmAsync(farm);
 
             var farmForReturn = _mapper.Map<FarmStatisticsDto>(farm);
 
-            return await _generatetStatistics.GenerateStatistics(farmForReturn);
+            return await _generatetStatistics.GenerateStatisticsAsync(farmForReturn);
         }
 
         public async Task<IEnumerable<FarmOverviewDto>> GetFriendsFarmsAsync(Guid userId)
@@ -142,7 +142,7 @@ namespace Infrastructure.Services
             await _repositoryManager.SaveAsync();
         }
 
-        public async Task DeleteFarmById(Guid id)
+        public async Task DeleteFarmByIdAsync(Guid id)
         {
             var farm = await _repositoryManager.FarmRepository.GetFarmByUserIdAsync(id, true);
             if (farm == null)
