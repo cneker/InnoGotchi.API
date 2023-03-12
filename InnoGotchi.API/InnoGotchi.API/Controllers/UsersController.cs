@@ -129,7 +129,7 @@ namespace InnoGotchi.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteUser(Guid userId)
         {
-            await _userService.DeleteUserById(userId);
+            await _userService.DeleteUserByIdAsync(userId);
             _logger.LogInformation("User was deleted");
             return NoContent();
         }

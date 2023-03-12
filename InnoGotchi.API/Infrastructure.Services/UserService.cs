@@ -40,7 +40,7 @@ namespace Infrastructure.Services
         public async Task<IEnumerable<UserInfoDto>> GetUsersInfoAsync() =>
             _mapper.Map<IEnumerable<UserInfoDto>>(await _repositoryManager.UserRepository.GetUsersAsync(false));
 
-        public async Task DeleteUserById(Guid id)
+        public async Task DeleteUserByIdAsync(Guid id)
         {
             var user = await _repositoryManager.UserRepository.GetUserByIdAsync(id, false);
             if (user == null)
