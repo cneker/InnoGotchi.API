@@ -118,12 +118,12 @@ namespace Infrastructure.Services
         {
             var hungryRecords = pet.HungryStateChangesHistory.ToList();
             var thirstyRecords = pet.ThirstyStateChangesHistory.ToList();
-            var changesDate = DateTime.Now;
-            hungryRecords.Add(new HungryStateChanges { PetId = pet.Id, ChangesDate = changesDate });
-            thirstyRecords.Add(new ThirstyStateChanges { PetId = pet.Id, ChangesDate = changesDate });
+            var currentDate = DateTime.Now;
+            hungryRecords.Add(new HungryStateChanges { PetId = pet.Id, ChangesDate = currentDate });
+            thirstyRecords.Add(new ThirstyStateChanges { PetId = pet.Id, ChangesDate = currentDate });
 
-            DateTime startH = DateTime.Now, endH = DateTime.Now;
-            DateTime startT = DateTime.Now, endT = DateTime.Now;
+            DateTime startH = currentDate, endH = currentDate;
+            DateTime startT = currentDate, endT = currentDate;
 
             int i = 0, j = 0;
 
@@ -196,6 +196,7 @@ namespace Infrastructure.Services
                     startH = rec.ChangesDate;
                     break;
                 }
+                i++;
             }
         }
 
@@ -209,6 +210,7 @@ namespace Infrastructure.Services
                     endH = rec.ChangesDate;
                     break;
                 }
+                i++;
             }
         }
 
@@ -223,6 +225,7 @@ namespace Infrastructure.Services
                     emptyT = false;
                     break;
                 }
+                j++;
             }
         }
 
@@ -236,6 +239,7 @@ namespace Infrastructure.Services
                     j++;
                     break;
                 }
+                j++;
             }
         }
     }
