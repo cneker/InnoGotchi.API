@@ -137,7 +137,7 @@ namespace Tests.Services
             var service = new UserService(repositoryMock.Object, null, null, null);
 
             //Act
-            await service.DeleteUserById(id);
+            await service.DeleteUserByIdAsync(id);
 
             //Assert
             repositoryMock.Verify(r => r.FarmRepository.DeleteFarm(user.UserFarm), Times.Once);
@@ -158,7 +158,7 @@ namespace Tests.Services
             var service = new UserService(repositoryMock.Object, null, null, null);
 
             //Act
-            Func<Task> result = async () => await service.DeleteUserById(id);
+            Func<Task> result = async () => await service.DeleteUserByIdAsync(id);
 
             //Assert
             await result.Should().ThrowAsync<NotFoundException>().WithMessage("User not found");

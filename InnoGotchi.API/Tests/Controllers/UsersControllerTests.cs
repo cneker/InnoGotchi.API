@@ -130,7 +130,7 @@ namespace Tests.Controllers
             //Arrange
             var id = _fixture.Create<Guid>();
             var userServiceMock = new Mock<IUserService>();
-            userServiceMock.Setup(s => s.DeleteUserById(id))
+            userServiceMock.Setup(s => s.DeleteUserByIdAsync(id))
                 .Returns(Task.CompletedTask);
 
             var controller = new UsersController(userServiceMock.Object, _loggerMock);
